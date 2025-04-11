@@ -81,13 +81,10 @@
     
     <div class="data-container">
         <div class="data-row">
-            <div class="data-label">FECHA:</div>
+            <div class="data-label">FECHA HORA:</div>
             <div class="data-value" id="fecha">Cargando...</div>
         </div>
-        <div class="data-row">
-            <div class="data-label">HORA:</div>
-            <div class="data-value" id="hora">Cargando...</div>
-        </div>
+        
         <div class="data-row">
             <div class="data-label">PRODUCTO:</div>
             <div class="data-value" id="producto">Cargando...</div>
@@ -130,7 +127,7 @@
         // Cargar datos desde URL
         const logoUrl = 'https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain';
         const fecha = getUrlParameter('fecha') || '';
-        const hora = getUrlParameter('hora') || '';
+       
         const producto = getUrlParameter('producto') || '';
         const cantidadUn = getUrlParameter('cantidad_un') || '';
         const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
@@ -141,7 +138,7 @@
         // Aplicar datos a la etiqueta
         document.getElementById('logo').src = logoUrl;
         document.getElementById('fecha').textContent = fecha;
-        document.getElementById('hora').textContent = hora;
+        
         document.getElementById('producto').textContent = producto;
         document.getElementById('cantidad_un').textContent = cantidadUn;
         document.getElementById('cantidad_cajones').textContent = cantidadCajones;
