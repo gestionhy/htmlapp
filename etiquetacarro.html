@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta de Carros</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            max-height: 100px;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .data-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .data-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .data-label {
+            font-size: 28px;
+            font-weight: bold;
+            min-width: 300px;
+            padding: 5px;
+            background-color: #f2f2f2;
+        }
+        .data-value {
+            font-size: 28px;
+            padding: 5px;
+            flex-grow: 1;
+        }
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        #qrcode {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: white;
+        }
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img id="logo" class="logo" alt="Logo de la empresa">
+    </div>
+    
+
+    
+    <div class="data-container">
+        <div class="data-row">
+            <div class="data-label">FECHA:</div>
+            <div class="data-value" id="fecha">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">HORA:</div>
+            <div class="data-value" id="hora">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">PRODUCTO:</div>
+            <div class="data-value" id="producto">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">CANTIDAD (UN):</div>
+            <div class="data-value" id="cantidad_un">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">CANTIDAD (CAJONES):</div>
+            <div class="data-value" id="cantidad_cajones">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">CANTIDAD (CAJAS):</div>
+            <div class="data-value" id="cantidad_cajas">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">LOTE:</div>
+            <div class="data-value" id="lote">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">FECHA DE VENCIMIENTO:</div>
+            <div class="data-value" id="fecha_vencimiento">Cargando...</div>
+        </div>
+    </div>
+    
+    <div class="qr-container">
+        <div id="qrcode"></div>
+    </div>
+    
+    <script>
+        // Función para obtener parámetros de la URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Cargar datos desde URL
+        const logoUrl = 'src"https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain"';
+        const fecha = getUrlParameter('fecha') || '';
+        const hora = getUrlParameter('hora') || '';
+        const producto = getUrlParameter('producto') || '';
+        const cantidadUn = getUrlParameter('cantidad_un') || '';
+        const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
+        const cantidadCajas = getUrlParameter('cantidad_cajas') || '';
+        const lote = getUrlParameter('lote') || '';
+        const fechaVencimiento = getUrlParameter('fecha_vencimiento') || '';
+        
+        // Aplicar datos a la etiqueta
+        document.getElementById('logo').src = logoUrl;
+        document.getElementById('fecha').textContent = fecha;
+        document.getElementById('hora').textContent = hora;
+        document.getElementById('producto').textContent = producto;
+        document.getElementById('cantidad_un').textContent = cantidadUn;
+        document.getElementById('cantidad_cajones').textContent = cantidadCajones;
+        document.getElementById('cantidad_cajas').textContent = cantidadCajas;
+        document.getElementById('lote').textContent = lote;
+        document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
+        
+        // Generar texto para el código QR
+        const qrData = `FECHA: ${fecha}, HORA: ${hora}, PRODUCTO: ${producto}, CANTIDAD (UN): ${cantidadUn}, CANTIDAD (CAJONES): ${cantidadCajones}, CANTIDAD (CAJAS): ${cantidadCajas}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
+        
+        // Esperar a que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Generar código QR con la nueva biblioteca
+                new QRCode(document.getElementById("qrcode"), {
+                    text: qrData,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch (e) {
+                console.error("Error al generar el QR:", e);
+                document.getElementById('qrcode').textContent = "Error al generar QR";
+            }
+        });
+        
+        // Método alternativo para generar el QR cuando la página cargue por completo
+        window.onload = function() {
+            try {
+                if (!document.getElementById("qrcode").firstChild) {
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: qrData,
+                        width: 200,
+                        height: 200,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            } catch (e) {
+                console.error("Error al generar el QR (onload):", e);
+                document.getElementById('qrcode').textContent = "Error al generar QR";
+            }
+        };
+    </script>
+</body>
+</html>
