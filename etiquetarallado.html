@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta de Carros</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            max-height: 100px;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .data-container {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .data-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .data-label {
+            font-size: 28px;
+            font-weight: bold;
+            min-width: 300px;
+            padding: 5px;
+            background-color: #f2f2f2;
+        }
+        .data-value {
+            font-size: 28px;
+            padding: 5px;
+            flex-grow: 1;
+        }
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        #qrcode {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: white;
+        }
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img id="logo" class="logo" alt="Logo de la empresa">
+    </div>
+    
+    <div class="data-container">
+        <div class="data-row">
+            <div class="data-label">FECHA HORA:</div>
+            <div class="data-value" id="fecha">Cargando...</div>
+        </div>
+        
+        <div class="data-row">
+            <div class="data-label">PRODUCTO:</div>
+            <div class="data-value" id="producto">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">UNIDADES:</div>
+            <div class="data-value" id="cantidad_un">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">CAJONES:</div>
+            <div class="data-value" id="cantidad_cajones">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">CAJAS:</div>
+            <div class="data-value" id="cantidad_cajas">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">LOTE:</div>
+            <div class="data-value" id="lote">Cargando...</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">FECHA DE VENCIMIENTO:</div>
+            <div class="data-value" id="fecha_vencimiento">Cargando...</div>
+        </div>
+    </div>
+    
+    <div class="qr-container">
+        <div id="qrcode"></div>
+    </div>
+    
+    <script>
+        // Función para obtener parámetros de la URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Función para convertir formato de fecha MM/DD/YYYY a DD/MM/YYYY
+        function convertirFormatoFecha(fechaTexto) {
+            // Verificar si es una fecha en formato MM/DD/YYYY
+            if (!fechaTexto || fechaTexto.trim() === '') return fechaTexto;
+            
+            // Intentar diferentes formatos posibles
+            // Verificar formato MM/DD/YYYY
+            const regexMMDD = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+            const matchMMDD = fechaTexto.match(regexMMDD);
+            
+            if (matchMMDD) {
+                const mes = matchMMDD[1];
+                const dia = matchMMDD[2];
+                const anio = matchMMDD[3];
+                
+                // Sólo convertir si parece ser realmente MM/DD
+                if (parseInt(mes) <= 12) {
+                    return `${dia}/${mes}/${anio}`;
+                }
+            }
+            
+            return fechaTexto; // Si no coincide con el patrón, devolver sin cambios
+        }
+        
+        // Cargar datos desde URL
+        const logoUrl = 'https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain';
+        let fechaOriginal = getUrlParameter('fecha') || '';
+        let fechaVencimientoOriginal = getUrlParameter('fecha_vencimiento') || '';
+        
+        // Convertir fechas al formato argentino (DD/MM/YYYY)
+        const fecha = convertirFormatoFecha(fechaOriginal);
+        const producto = getUrlParameter('producto') || '';
+        const cantidadUn = getUrlParameter('cantidad_un') || '';
+        const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
+        const cantidadCajas = getUrlParameter('cantidad_cajas') || '';
+        const lote = getUrlParameter('lote') || '';
+        const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
+        
+        // Aplicar datos a la etiqueta
+        document.getElementById('logo').src = logoUrl;
+        document.getElementById('fecha').textContent = fecha;
+        document.getElementById('producto').textContent = producto;
+        document.getElementById('cantidad_un').textContent = cantidadUn;
+        document.getElementById('cantidad_cajones').textContent = cantidadCajones;
+        document.getElementById('cantidad_cajas').textContent = cantidadCajas;
+        document.getElementById('lote').textContent = lote;
+        document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
+        
+        // Generar texto para el código QR (usando valores ya convertidos)
+        const qrData = `FECHA HORA: ${fecha}, PRODUCTO: ${producto}, UNIDADES: ${cantidadUn}, CAJONES: ${cantidadCajones}, CAJAS: ${cantidadCajas}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
+        
+        // Función para imprimir automáticamente
+        function autoPrint() {
+            window.print();
+        }
+        
+        // Generar QR y configurar para imprimir cuando todo esté listo
+        window.onload = function() {
+            try {
+                // Generar código QR
+                new QRCode(document.getElementById("qrcode"), {
+                    text: qrData,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // Esperar un momento para asegurarnos de que el QR se ha generado completamente
+                setTimeout(function() {
+                    autoPrint();
+                }, 1000);
+                
+            } catch (e) {
+                console.error("Error al generar el QR o imprimir:", e);
+                document.getElementById('qrcode').textContent = "Error al generar QR";
+            }
+        };
+    </script>
+</body>
+</html>
