@@ -88,24 +88,21 @@
             <div class="data-value" id="producto">Cargando...</div>
         </div>
         <div class="data-row">
-            <div class="data-label">FECHA DE RALLADO:</div>
-            <div class="data-value" id="cantidad_un">Cargando...</div>
-        </div>
-        <div class="data-row">
             <div class="data-label">FECHA DE BAJA:</div>
-            <div class="data-value" id="cantidad_cajones">Cargando...</div>
+            <div class="data-value" id="fechaBaja">Cargando...</div>
         </div>
         <div class="data-row">
-            <div class="data-label">CONTIENE:</div>
-            <div class="data-value" id="cantidad_cajas">Cargando...</div>
+            <div class="data-label">FECHA DE RALLADO:</div>
+            <div class="data-value" id="fechaRallado">Cargando...</div>
         </div>
+        
         <div class="data-row">
             <div class="data-label">LOTE:</div>
             <div class="data-value" id="lote">Cargando...</div>
         </div>
         <div class="data-row">
             <div class="data-label">FECHA DE VENCIMIENTO:</div>
-            <div class="data-value" id="fecha_vencimiento">Cargando...</div>
+            <div class="data-value" id="fechaVencimiento">Cargando...</div>
         </div>
     </div>
     
@@ -148,15 +145,15 @@
         
         // Cargar datos desde URL
         const logoUrl = 'https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain';
-        let fechaOriginal = getUrlParameter('fecha') || '';
-        let fechaVencimientoOriginal = getUrlParameter('fecha_vencimiento') || '';
+        let fechaOriginal = getUrlParameter('fechaRallado') || '';
+        let fechaVencimientoOriginal = getUrlParameter('fechaVencimiento') || '';
+        let fechaBajaOriginal = getUrlParameter('fechaBaja') || '';
         
         // Convertir fechas al formato argentino (DD/MM/YYYY)
         const fecha = convertirFormatoFecha(fechaOriginal);
+        const fechaRallado = convertirFormatoFecha(fechaOriginal);
         const producto = getUrlParameter('producto') || '';
-        const cantidadUn = getUrlParameter('cantidad_un') || '';
-        const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
-        const cantidadCajas = getUrlParameter('cantidad_cajas') || '';
+        const fechaBaja = convertirFormatoFecha(fechaBajaOriginal);
         const lote = getUrlParameter('lote') || '';
         const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
         
