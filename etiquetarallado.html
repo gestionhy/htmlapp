@@ -148,25 +148,25 @@
         let fechaOriginal = getUrlParameter('fechaRallado') || '';
         let fechaVencimientoOriginal = getUrlParameter('fechaVencimiento') || '';
         let fechaBajaOriginal = getUrlParameter('fechaBaja') || '';
+        const producto = getUrlParameter('producto') || '';
+        const lote = getUrlParameter('lote') || '';
+
         
         // Convertir fechas al formato argentino (DD/MM/YYYY)
         const fecha = convertirFormatoFecha(fechaOriginal);
         const fechaRallado = convertirFormatoFecha(fechaOriginal);
-        const producto = getUrlParameter('producto') || '';
-        const fechaBaja = convertirFormatoFecha(fechaBajaOriginal);
-        const lote = getUrlParameter('lote') || '';
-        const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
+               const fechaBaja = convertirFormatoFecha(fechaBajaOriginal);
+              const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
         
         // Aplicar datos a la etiqueta
         document.getElementById('logo').src = logoUrl;
         document.getElementById('fecha').textContent = fecha;
         document.getElementById('producto').textContent = producto;
-        document.getElementById('cantidad_un').textContent = cantidadUn;
-        document.getElementById('cantidad_cajones').textContent = cantidadCajones;
-        document.getElementById('cantidad_cajas').textContent = cantidadCajas;
+        document.getElementById('fechaRallado').textContent = fechaRallado;
+        document.getElementById('fechaBaja').textContent = fechaBaja;
+        document.getElementById('fechaVencimiento').textContent = fechaVencimiento;
         document.getElementById('lote').textContent = lote;
-        document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
-        
+       
         // Generar texto para el código QR (usando valores ya convertidos)
         const qrData = `FECHA HORA: ${fecha}, PRODUCTO: ${producto}, UNIDADES: ${cantidadUn}, CAJONES: ${cantidadCajones}, CAJAS: ${cantidadCajas}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
         
