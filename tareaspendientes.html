@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
+      margin: 2cm;
     }
     h1 {
       text-align: center;
@@ -20,14 +20,32 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
     }
     th, td {
       border: 1px solid #000;
-      padding: 8px;
-      font-size: 14px;
+      padding: 6px;
+      font-size: 12pt;
+      word-wrap: break-word;
     }
     th {
       background-color: #f2f2f2;
+    }
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 40%;
+    }
+    th:nth-child(1),
+    td:nth-child(1) {
+      width: 30%;
+    }
+    th:nth-child(2),
+    td:nth-child(2) {
+      width: 30%;
+    }
+    @page {
+      size: A4 portrait;
+      margin: 2cm;
     }
     @media print {
       body {
@@ -86,3 +104,4 @@
 
 </body>
 </html>
+
