@@ -64,6 +64,7 @@
       <tr>
         <th>Equipo</th>
         <th>Detalle de tarea</th>
+        <th>Imagen</th>
         <th>Realizó</th>
       </tr>
     </thead>
@@ -88,14 +89,19 @@
     document.getElementById("fecha").innerText = "Fecha: " + fecha;
 
     const tbody = document.getElementById("contenido");
-    for (let i = 0; i < equipos.length; i++) {
-      tbody.innerHTML += `
-        <tr>
-          <td>${equipos[i]}</td>
-          <td>${detalles[i] || "-"}</td>
-          <td></td>
-        </tr>`;
-    }
+    const imagenes = getParameterByName("imagenes")?.split(",") || [];
+
+for (let i = 0; i < equipos.length; i++) {
+  tbody.innerHTML += `
+    <tr>
+      <td>${equipos[i]}</td>
+      <td>${detalles[i] || "-"}</td>
+      <td></td>
+      <td>
+        ${imagenes[i] ? `<img src="${imagenes[i]}" style="max-width:100px; max-height:100px;">` : ""}
+      </td>
+    </tr>`;
+}
 
     window.onload = function() {
       setTimeout(() => window.print(), 500);
