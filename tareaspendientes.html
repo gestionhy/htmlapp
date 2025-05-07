@@ -49,9 +49,7 @@
         <th>Realizó</th>
       </tr>
     </thead>
-    <tbody id="contenido">
-      <!-- Filas cargadas dinámicamente -->
-    </tbody>
+    <tbody id="contenido"></tbody>
   </table>
 
   <script>
@@ -65,19 +63,18 @@
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    const equipos = getParameterByName("equipos")?.split("|||") || [];
-    const detalles = getParameterByName("detalles")?.split("|||") || [];
+    const equipos = getParameterByName("equipos")?.split(",") || [];
+    const detalles = getParameterByName("detalles")?.split(",") || [];
     const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
 
     document.getElementById("fecha").innerText = "Fecha: " + fecha;
 
     const tbody = document.getElementById("contenido");
-
     for (let i = 0; i < equipos.length; i++) {
       tbody.innerHTML += `
         <tr>
           <td>${equipos[i]}</td>
-          <td>${detalles[i]}</td>
+          <td>${detalles[i] || "-"}</td>
           <td></td>
         </tr>`;
     }
@@ -89,5 +86,3 @@
 
 </body>
 </html>
-
-
