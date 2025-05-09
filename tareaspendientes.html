@@ -4,63 +4,67 @@
   <meta charset="UTF-8">
   <title>Reporte de tareas seleccionadas</title>
   <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 2cm;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  p.fecha {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 30px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
-
-  th, td {
-    border: 1px solid #000;
-    padding: 6px;
-    font-size: 12pt;
-    word-wrap: break-word;
-    vertical-align: top;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-
-  /* Anchos proporcionales */
-  th:nth-child(1), td:nth-child(1) { width: 20%; } /* Equipo */
-  th:nth-child(2), td:nth-child(2) { width: 40%; } /* Detalle */
-  th:nth-child(3), td:nth-child(3) { width: 25%; } /* Realizó */
-  th:nth-child(4), td:nth-child(4) { width: 15%; } /* Imagen */
-
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  @page {
-    size: A4 portrait;
-    margin: 2cm;
-  }
-
-  @media print {
     body {
-      margin: 0;
+      font-family: Arial, sans-serif;
+      margin: 2cm;
     }
-  }
-</style>
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.fecha {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 6px;
+      font-size: 12pt;
+      word-wrap: break-word;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 20%; }
+    th:nth-child(2), td:nth-child(2) { width: 40%; }
+    th:nth-child(3), td:nth-child(3) { width: 25%; }
+    th:nth-child(4), td:nth-child(4) { width: 15%; vertical-align: middle; }
+
+    tbody tr {
+      height: 120px;
+    }
+
+    img {
+      max-width: 100px;
+      max-height: 100px;
+      display: block;
+      margin: auto;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 2cm;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -72,7 +76,7 @@
       <tr>
         <th>Equipo</th>
         <th>Detalle de tarea</th>
-        <th>Realizo</th>
+        <th>Realizó</th>
         <th>Foto de referencia</th>
       </tr>
     </thead>
@@ -80,50 +84,48 @@
   </table>
 
   <script>
+    function getParameterByName(name) {
+      const url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
 
-  function getParameterByName(name) {
-    const url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-  }
+    const equipos = getParameterByName("equipos")?.split(",") || [];
+    const detalles = getParameterByName("detalles")?.split(",") || [];
+    let imagenes = getParameterByName("imagenes")?.split(",") || [];
+    const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
 
-  const equipos = getParameterByName("equipos")?.split(",") || [];
-  const detalles = getParameterByName("detalles")?.split(",") || [];
-  let imagenes = getParameterByName("imagenes")?.split(",") || [];
-  const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
+    const maxLength = Math.max(equipos.length, detalles.length);
+    while (imagenes.length < maxLength) imagenes.push("");
 
-  // Igualar la longitud de los arrays
-  const maxLength = Math.max(equipos.length, detalles.length);
-  while (imagenes.length < maxLength) imagenes.push("");
+    document.getElementById("fecha").innerText = "Fecha: " + fecha;
 
-  document.getElementById("fecha").innerText = "Fecha: " + fecha;
+    const tbody = document.getElementById("contenido");
 
-  const tbody = document.getElementById("contenido");
+    for (let i = 0; i < maxLength; i++) {
+      const equipo = equipos[i] || "";
+      const detalle = detalles[i] || "";
+      const imagen = imagenes[i] || "";
 
-  for (let i = 0; i < maxLength; i++) {
-    const equipo = equipos[i] || "";
-    const detalle = detalles[i] || "";
-    const imagen = imagenes[i] || "";
+      tbody.innerHTML += `
+        <tr>
+          <td>${equipo}</td>
+          <td>${detalle}</td>
+          <td></td>
+          <td>${imagen ? `<img src="${imagen}" alt="imagen">` : ""}</td>
+        </tr>`;
+    }
 
-    tbody.innerHTML += `
-      <tr>
-        <td>${equipo}</td>
-        <td>${detalle}</td>
-        <td></td>
-        <td>${imagen ? `<img src="${imagen}" style="max-width:100px; max-height:100px;">` : ""}</td>
-      </tr>`;
-  }
-
-  window.onload = function () {
-    setTimeout(() => window.print(), 500);
-  };
-</script>
-
+    window.onload = function () {
+      setTimeout(() => window.print(), 500);
+    };
+  </script>
 
 </body>
 </html>
+
 
