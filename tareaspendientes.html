@@ -117,9 +117,7 @@
           <td>${detalle}</td>
           <td></td>
           <td>
-  ${imagen && imagen !== "no-image"
-    ? `<img src="${imagen}" alt="imagen">`
-    : `<div style="height:100px;">&nbsp;</div>`}
+ ${imagen ? `<img src="${imagen}" alt="imagen">` : ""}</td>
 </td>
         </tr>`;
     }
