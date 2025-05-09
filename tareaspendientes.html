@@ -116,7 +116,11 @@
           <td>${equipo}</td>
           <td>${detalle}</td>
           <td></td>
-          <td>${imagen ? `<img src="${imagen}" alt="imagen">` : ""}</td>
+          <td>
+  ${imagen 
+    ? `<img src="${imagen}" alt="">` 
+    : `<div style="height:100px; visibility:hidden;">&nbsp;</div>`}
+</td>
         </tr>`;
     }
 
