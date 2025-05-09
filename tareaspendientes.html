@@ -80,6 +80,7 @@
   </table>
 
   <script>
+
   function getParameterByName(name) {
     const url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -92,14 +93,11 @@
 
   const equipos = getParameterByName("equipos")?.split(",") || [];
   const detalles = getParameterByName("detalles")?.split(",") || [];
-  const imagenes = getParameterByName("imagenes")?.split(",") || [];
+  let imagenes = getParameterByName("imagenes")?.split(",") || [];
   const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
 
-  // Rellenar arrays más cortos para que todos tengan la misma longitud
-  const maxLength = Math.max(equipos.length, detalles.length, imagenes.length);
-
-  while (equipos.length < maxLength) equipos.push("");
-  while (detalles.length < maxLength) detalles.push("");
+  // Igualar la longitud de los arrays
+  const maxLength = Math.max(equipos.length, detalles.length);
   while (imagenes.length < maxLength) imagenes.push("");
 
   document.getElementById("fecha").innerText = "Fecha: " + fecha;
@@ -107,19 +105,24 @@
   const tbody = document.getElementById("contenido");
 
   for (let i = 0; i < maxLength; i++) {
+    const equipo = equipos[i] || "";
+    const detalle = detalles[i] || "";
+    const imagen = imagenes[i] || "";
+
     tbody.innerHTML += `
       <tr>
-        <td>${equipos[i]}</td>
-        <td>${detalles[i]}</td>
+        <td>${equipo}</td>
+        <td>${detalle}</td>
         <td></td>
-        <td>${imagenes[i] ? `<img src="${imagenes[i]}" style="max-width:100px; max-height:100px;">` : ""}</td>
+        <td>${imagen ? `<img src="${imagen}" style="max-width:100px; max-height:100px;">` : ""}</td>
       </tr>`;
   }
 
-  window.onload = function() {
+  window.onload = function () {
     setTimeout(() => window.print(), 500);
   };
 </script>
+
 
 </body>
 </html>
