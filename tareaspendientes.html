@@ -80,41 +80,46 @@
   </table>
 
   <script>
-    function getParameterByName(name) {
-      const url = window.location.href;
-      name = name.replace(/[\[\]]/g, "\\$&");
-      const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
+  function getParameterByName(name) {
+    const url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
 
-    const equipos = getParameterByName("equipos")?.split(",") || [];
-    const detalles = getParameterByName("detalles")?.split(",") || [];
-    const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
+  const equipos = getParameterByName("equipos")?.split(",") || [];
+  const detalles = getParameterByName("detalles")?.split(",") || [];
+  const imagenes = getParameterByName("imagenes")?.split(",") || [];
+  const fecha = getParameterByName("fecha") || new Date().toISOString().split("T")[0];
 
-    document.getElementById("fecha").innerText = "Fecha: " + fecha;
+  // Rellenar arrays más cortos para que todos tengan la misma longitud
+  const maxLength = Math.max(equipos.length, detalles.length, imagenes.length);
 
-    const tbody = document.getElementById("contenido");
-    const imagenes = getParameterByName("imagenes")?.split(",") || [];
+  while (equipos.length < maxLength) equipos.push("");
+  while (detalles.length < maxLength) detalles.push("");
+  while (imagenes.length < maxLength) imagenes.push("");
 
-for (let i = 0; i < equipos.length; i++) {
-  tbody.innerHTML += `
-    <tr>
-      <td>${equipos[i]}</td>
-      <td>${detalles[i] || "-"}</td>
-      <td></td>
-      <td>
-        ${imagenes[i] ? `<img src="${imagenes[i]}" style="max-width:100px; max-height:100px;">` : ""}
-      </td>
-    </tr>`;
-}
+  document.getElementById("fecha").innerText = "Fecha: " + fecha;
 
-    window.onload = function() {
-      setTimeout(() => window.print(), 500);
-    };
-  </script>
+  const tbody = document.getElementById("contenido");
+
+  for (let i = 0; i < maxLength; i++) {
+    tbody.innerHTML += `
+      <tr>
+        <td>${equipos[i]}</td>
+        <td>${detalles[i]}</td>
+        <td></td>
+        <td>${imagenes[i] ? `<img src="${imagenes[i]}" style="max-width:100px; max-height:100px;">` : ""}</td>
+      </tr>`;
+  }
+
+  window.onload = function() {
+    setTimeout(() => window.print(), 500);
+  };
+</script>
 
 </body>
 </html>
