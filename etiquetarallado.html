@@ -78,6 +78,20 @@
       border: 1px solid #999;
       background: #fff;
     }
+
+    .hoja {
+  page-break-after: always;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 277mm;
+  box-sizing: border-box;
+}
+
+.etiqueta {
+  flex: 1;
+  margin-bottom: 10mm;
+}
   </style>
 </head>
 <body>
@@ -119,69 +133,99 @@
   </div>
 
   <script>
-    function getUrlParameter(name) {
-      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-      const results = regex.exec(location.search);
-      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
+  function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
 
-    function convertirFormatoFecha(fechaTexto) {
-      if (!fechaTexto || fechaTexto.trim() === '') return fechaTexto;
-      const regexMMDD = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-      const matchMMDD = fechaTexto.match(regexMMDD);
-      if (matchMMDD) {
-        const mes = matchMMDD[1];
-        const dia = matchMMDD[2];
-        const anio = matchMMDD[3];
-        if (parseInt(mes) <= 12) return `${dia}/${mes}/${anio}`;
+  function convertirFormatoFecha(fechaTexto) {
+    if (!fechaTexto || fechaTexto.trim() === '') return fechaTexto;
+    const regexMMDD = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+    const matchMMDD = fechaTexto.match(regexMMDD);
+    if (matchMMDD) {
+      const mes = matchMMDD[1];
+      const dia = matchMMDD[2];
+      const anio = matchMMDD[3];
+      if (parseInt(mes) <= 12) return `${dia}/${mes}/${anio}`;
+    }
+    return fechaTexto;
+  }
+
+  const logoUrl = 'https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain';
+  const fechaOriginal = getUrlParameter('fechaRallado') || '';
+  const fechaVencimientoOriginal = getUrlParameter('fechaVencimiento') || '';
+  const fechaBajaOriginal = getUrlParameter('fechaBaja') || '';
+  const producto = getUrlParameter('producto') || '';
+  const lote = getUrlParameter('lote') || '';
+  const copias = parseInt(getUrlParameter('copias')) || 1;
+
+  const fecha = convertirFormatoFecha(fechaOriginal);
+  const fechaRallado = convertirFormatoFecha(fechaOriginal);
+  const fechaBaja = convertirFormatoFecha(fechaBajaOriginal);
+  const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
+
+  const qrData = `FECHA HORA: ${fecha}, PRODUCTO: ${producto}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
+
+  function generarEtiquetas() {
+    const etiquetaHTML = document.body.innerHTML;
+    document.body.innerHTML = '';
+
+    for (let i = 0; i < copias; i += 2) {
+      const hoja = document.createElement('div');
+      hoja.classList.add('hoja');
+
+      for (let j = 0; j < 2; j++) {
+        if (i + j >= copias) break;
+
+        const etiqueta = document.createElement('div');
+        etiqueta.classList.add('etiqueta');
+        etiqueta.innerHTML = etiquetaHTML;
+
+        hoja.appendChild(etiqueta);
       }
-      return fechaTexto;
+
+      document.body.appendChild(hoja);
     }
 
-    const logoUrl = 'https://th.bing.com/th/id/OIP.xFyPc9jo_wRxtLdkz1-gxgHaEt?rs=1&pid=ImgDetMain';
-    const fechaOriginal = getUrlParameter('fechaRallado') || '';
-    const fechaVencimientoOriginal = getUrlParameter('fechaVencimiento') || '';
-    const fechaBajaOriginal = getUrlParameter('fechaBaja') || '';
-    const producto = getUrlParameter('producto') || '';
-    const lote = getUrlParameter('lote') || '';
+    // Generar QR en todas
+    const todosQR = document.querySelectorAll("#qrcode");
+    todosQR.forEach(qr => {
+      new QRCode(qr, {
+        text: qrData,
+        width: 140,
+        height: 140,
+        colorDark: "#000",
+        colorLight: "#fff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    });
 
-    const fecha = convertirFormatoFecha(fechaOriginal);
-    const fechaRallado = convertirFormatoFecha(fechaOriginal);
-    const fechaBaja = convertirFormatoFecha(fechaBajaOriginal);
-    const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
+    // Completar los datos
+    document.querySelectorAll("#logo").forEach(el => el.src = logoUrl);
+    document.querySelectorAll("#fecha").forEach(el => el.textContent = fecha);
+    document.querySelectorAll("#producto").forEach(el => el.textContent = producto);
+    document.querySelectorAll("#fechaRallado").forEach(el => el.textContent = fechaRallado);
+    document.querySelectorAll("#fechaBaja").forEach(el => el.textContent = fechaBaja);
+    document.querySelectorAll("#fechaVencimiento").forEach(el => el.textContent = fechaVencimiento);
+    document.querySelectorAll("#lote").forEach(el => el.textContent = lote);
+  }
 
-    document.getElementById('logo').src = logoUrl;
-    document.getElementById('fecha').textContent = fecha;
-    document.getElementById('producto').textContent = producto;
-    document.getElementById('fechaRallado').textContent = fechaRallado;
-    document.getElementById('fechaBaja').textContent = fechaBaja;
-    document.getElementById('fechaVencimiento').textContent = fechaVencimiento;
-    document.getElementById('lote').textContent = lote;
+  function autoPrint() {
+    window.print();
+  }
 
-    const qrData = `FECHA HORA: ${fecha}, PRODUCTO: ${producto}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
-
-    function autoPrint() {
-      window.print();
+  window.onload = function () {
+    try {
+      generarEtiquetas();
+      setTimeout(autoPrint, 800);
+    } catch (e) {
+      console.error("Error al generar contenido para impresión:", e);
+      document.body.innerHTML = "<h2>Error al generar etiquetas</h2>";
     }
+  };
+</script>
 
-    window.onload = function () {
-      try {
-        new QRCode(document.getElementById("qrcode"), {
-          text: qrData,
-          width: 140,
-          height: 140,
-          colorDark: "#000",
-          colorLight: "#fff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
-
-        setTimeout(autoPrint, 800);
-      } catch (e) {
-        console.error("Error al generar el QR o imprimir:", e);
-        document.getElementById('qrcode').textContent = "Error al generar QR";
-      }
-    };
-  </script>
 </body>
 </html>
