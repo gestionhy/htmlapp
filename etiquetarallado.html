@@ -6,21 +6,21 @@
   <title>PAN RALLADO</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    @page {
-      size: A4;
-      margin: 10mm;
-    }
+   @page {
+  size: 216mm 356mm; /* Tamaño oficio */
+  margin: 10mm;
+}
 
-    body {
-      margin: 0;
-      padding: 10mm;
-      font-family: 'Segoe UI', sans-serif;
-      font-size: 14pt;
-      color: #333;
-      box-sizing: border-box;
-      width: 190mm;
-      height: 277mm;
-    }
+body {
+  margin: 0;
+  padding: 10mm;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14pt;
+  color: #333;
+  box-sizing: border-box;
+  width: 196mm;
+  height: 336mm;
+}
 
     .header {
       display: flex;
@@ -79,18 +79,21 @@
       background: #fff;
     }
 
-    .hoja {
+   .hoja {
   page-break-after: always;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 277mm;
+  height: 336mm; /* altura útil del body en oficio */
   box-sizing: border-box;
+  padding: 5mm 0;
 }
 
 .etiqueta {
   flex: 1;
-  margin-bottom: 10mm;
+  margin: 5mm 0;
+  padding: 5mm;
+  border: 1px dashed #ccc; /* opcional: solo para ver los límites */
 }
   </style>
 </head>
