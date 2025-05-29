@@ -9,25 +9,37 @@
     body {
       margin: 0;
       font-family: 'Raleway', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #fff);
-      color: #2c3e50;
+      background: #f8f8f8;
+      color: #59025c;
     }
 
     header {
-      background: linear-gradient(to right, #00796b, #009688);
-      color: white;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 2rem;
+      background: #ffffff;
+      color: #59025c;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    header img {
+      height: 60px;
+    }
+
+    header h1 {
       font-family: 'Fredoka', sans-serif;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-size: 1.8rem;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     nav {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      background: #004d40;
+      background: #59025c;
       box-shadow: inset 0 -2px 5px rgba(0,0,0,0.2);
     }
 
@@ -36,20 +48,25 @@
       padding: 1rem;
       font-size: 1rem;
       background: transparent;
-      color: #fff;
+      color: white;
       border: none;
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
     }
 
     nav button:hover {
-      background: #00695c;
+      background: #59025c;
       transform: scale(1.05);
     }
 
     .tab {
       display: none;
       padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      margin: 2rem auto;
+      max-width: 960px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
       animation: fade 0.5s ease-in-out;
     }
 
@@ -65,27 +82,31 @@
     .tab h2 {
       font-family: 'Fredoka', sans-serif;
       font-size: 2rem;
-      color: #00796b;
+      color: #59025c;
       display: flex;
       align-items: center;
-    }
-
-    .tab h2 svg {
-      margin-right: 0.5rem;
-      width: 32px;
-      height: 32px;
     }
 
     .tab img {
       max-width: 100%;
       margin: 1.5rem 0;
       border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .tab ul {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      padding-left: 1.2rem;
+    }
+
+    .tab li {
+      margin-bottom: 1rem;
     }
 
     .final-clue {
       font-size: 1.4rem;
-      color: #d32f2f;
+      color: #59025c;
       font-weight: bold;
       text-align: center;
       margin-top: 2rem;
@@ -104,11 +125,52 @@
       .tab h2 {
         font-size: 1.5rem;
       }
+
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      header img {
+        margin-bottom: 0.5rem;
+      }
+      
+      .triangle-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 86.6px solid yellow; /* amarillo Don Yeyo */
+  position: relative;
+  text-align: center;
+}
+
+.triangle::before {
+  content: "5";
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  font-family: 'Fredoka', sans-serif;
+}
     }
   </style>
 </head>
 <body>
-  <header>Las 5 Claves de la Inocuidad Alimentaria</header>
+  <header>
+    <img src="https://donyeyo.com.ar/images/donyeyo-logo.svg" alt="Logo Don Yeyo">
+    <h1>Las 5 Claves de la Inocuidad Alimentaria</h1>
+  </header>
+
   <nav>
     <button onclick="showTab(0)">ℹ️ Intro</button>
     <button onclick="showTab(1)">🧼 Clave 1</button>
@@ -203,7 +265,11 @@
 </ul>
 
 <img src="https://cdn-icons-png.flaticon.com/512/2913/2913435.png" alt="Imagen agua">
-<div class="final-clue">Número oculto: <strong>5</strong></div>
+
+
+<div class="triangle-wrapper">
+  <div class="triangle">5</div>
+</div>
 
   </section>
 
