@@ -1,77 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Las 5 Claves de la Inocuidad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Fredoka:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Raleway', sans-serif;
-      background: #fefefe;
+      background: linear-gradient(135deg, #e0f7fa, #fff);
       color: #2c3e50;
     }
+
     header {
-      background: #009688;
+      background: linear-gradient(to right, #00796b, #009688);
       color: white;
-      padding: 1rem;
+      padding: 1.5rem;
       text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      letter-spacing: 1px;
+      font-size: 2rem;
+      font-family: 'Fredoka', sans-serif;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+
     nav {
       display: flex;
+      justify-content: center;
       flex-wrap: wrap;
-      justify-content: space-around;
       background: #004d40;
+      box-shadow: inset 0 -2px 5px rgba(0,0,0,0.2);
     }
+
     nav button {
       flex: 1;
       padding: 1rem;
       font-size: 1rem;
-      background: #004d40;
-      color: white;
+      background: transparent;
+      color: #fff;
       border: none;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
     }
+
     nav button:hover {
       background: #00695c;
+      transform: scale(1.05);
     }
+
     .tab {
       display: none;
       padding: 2rem;
+      animation: fade 0.5s ease-in-out;
     }
+
     .active {
       display: block;
     }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .tab h2 {
-      font-family: 'Patrick Hand', cursive;
+      font-family: 'Fredoka', sans-serif;
       font-size: 2rem;
       color: #00796b;
+      display: flex;
+      align-items: center;
     }
+
+    .tab h2 svg {
+      margin-right: 0.5rem;
+      width: 32px;
+      height: 32px;
+    }
+
     .tab img {
       max-width: 100%;
-      margin: 1rem 0;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
+
     .final-clue {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: #d32f2f;
       font-weight: bold;
       text-align: center;
       margin-top: 2rem;
     }
+
     @media (max-width: 600px) {
       nav button {
-        font-size: 0.9rem;
-        padding: 0.8rem;
+        font-size: 0.85rem;
+        padding: 0.7rem;
       }
+
       .tab {
         padding: 1rem;
+      }
+
+      .tab h2 {
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -79,35 +110,40 @@
 <body>
   <header>Las 5 Claves de la Inocuidad Alimentaria</header>
   <nav>
-    <button onclick="showTab(0)">Clave 1</button>
-    <button onclick="showTab(1)">Clave 2</button>
-    <button onclick="showTab(2)">Clave 3</button>
-    <button onclick="showTab(3)">Clave 4</button>
-    <button onclick="showTab(4)">Clave 5</button>
+    <button onclick="showTab(0)">🧼 Clave 1</button>
+    <button onclick="showTab(1)">🔪 Clave 2</button>
+    <button onclick="showTab(2)">🔥 Clave 3</button>
+    <button onclick="showTab(3)">❄️ Clave 4</button>
+    <button onclick="showTab(4)">💧 Clave 5</button>
   </nav>
+
   <section class="tab active">
-    <h2>Mantenga la limpieza</h2>
-    <img src="" alt="Imagen limpieza">
+    <h2>🧼 Mantenga la limpieza</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png" alt="Imagen limpieza">
     <p>Lávese las manos antes de preparar alimentos y con frecuencia mientras los prepara. Limpie todas las superficies y equipos usados en la preparación.</p>
   </section>
+
   <section class="tab">
-    <h2>Separe alimentos crudos y cocidos</h2>
-    <img src="" alt="Imagen separación">
+    <h2>🔪 Separe alimentos crudos y cocidos</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/3824/3824473.png" alt="Imagen separación">
     <p>Evite la contaminación cruzada separando carnes crudas de otros alimentos, especialmente los cocidos o listos para consumir.</p>
   </section>
+
   <section class="tab">
-    <h2>Cocine completamente</h2>
-    <img src="" alt="Imagen cocción">
+    <h2>🔥 Cocine completamente</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Imagen cocción">
     <p>Los alimentos deben alcanzar temperaturas internas adecuadas para matar microorganismos peligrosos. Use termómetros si es necesario.</p>
   </section>
+
   <section class="tab">
-    <h2>Mantenga los alimentos a temperaturas seguras</h2>
-    <img src="" alt="Imagen temperatura">
+    <h2>❄️ Mantenga los alimentos a temperaturas seguras</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046757.png" alt="Imagen temperatura">
     <p>No deje alimentos cocinados a temperatura ambiente por más de 2 horas. Mantenga caliente por encima de 60°C o refrigere por debajo de 5°C.</p>
   </section>
+
   <section class="tab">
-    <h2>Use agua y materias primas seguras</h2>
-    <img src="" alt="Imagen agua y materias primas">
+    <h2>💧 Use agua y materias primas seguras</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/2913/2913435.png" alt="Imagen agua">
     <p>Use agua potable. Seleccione productos frescos y seguros. Preste atención al origen, aspecto y conservación de los ingredientes.</p>
     <div class="final-clue">Número oculto: <strong>5</strong></div>
   </section>
