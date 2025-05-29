@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Las 5 Claves de la Inocuidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Raleway', sans-serif;
+      background: #fefefe;
+      color: #2c3e50;
+    }
+    header {
+      background: #009688;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      background: #004d40;
+    }
+    nav button {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1rem;
+      background: #004d40;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    nav button:hover {
+      background: #00695c;
+    }
+    .tab {
+      display: none;
+      padding: 2rem;
+    }
+    .active {
+      display: block;
+    }
+    .tab h2 {
+      font-family: 'Patrick Hand', cursive;
+      font-size: 2rem;
+      color: #00796b;
+    }
+    .tab img {
+      max-width: 100%;
+      margin: 1rem 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .final-clue {
+      font-size: 1.5rem;
+      color: #d32f2f;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    @media (max-width: 600px) {
+      nav button {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+      }
+      .tab {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Las 5 Claves de la Inocuidad Alimentaria</header>
+  <nav>
+    <button onclick="showTab(0)">Clave 1</button>
+    <button onclick="showTab(1)">Clave 2</button>
+    <button onclick="showTab(2)">Clave 3</button>
+    <button onclick="showTab(3)">Clave 4</button>
+    <button onclick="showTab(4)">Clave 5</button>
+  </nav>
+  <section class="tab active">
+    <h2>Mantenga la limpieza</h2>
+    <img src="" alt="Imagen limpieza">
+    <p>Lávese las manos antes de preparar alimentos y con frecuencia mientras los prepara. Limpie todas las superficies y equipos usados en la preparación.</p>
+  </section>
+  <section class="tab">
+    <h2>Separe alimentos crudos y cocidos</h2>
+    <img src="" alt="Imagen separación">
+    <p>Evite la contaminación cruzada separando carnes crudas de otros alimentos, especialmente los cocidos o listos para consumir.</p>
+  </section>
+  <section class="tab">
+    <h2>Cocine completamente</h2>
+    <img src="" alt="Imagen cocción">
+    <p>Los alimentos deben alcanzar temperaturas internas adecuadas para matar microorganismos peligrosos. Use termómetros si es necesario.</p>
+  </section>
+  <section class="tab">
+    <h2>Mantenga los alimentos a temperaturas seguras</h2>
+    <img src="" alt="Imagen temperatura">
+    <p>No deje alimentos cocinados a temperatura ambiente por más de 2 horas. Mantenga caliente por encima de 60°C o refrigere por debajo de 5°C.</p>
+  </section>
+  <section class="tab">
+    <h2>Use agua y materias primas seguras</h2>
+    <img src="" alt="Imagen agua y materias primas">
+    <p>Use agua potable. Seleccione productos frescos y seguros. Preste atención al origen, aspecto y conservación de los ingredientes.</p>
+    <div class="final-clue">Número oculto: <strong>5</strong></div>
+  </section>
+
+  <script>
+    function showTab(index) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+      });
+    }
+  </script>
+</body>
+</html>
