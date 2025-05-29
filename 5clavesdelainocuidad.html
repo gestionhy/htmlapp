@@ -73,6 +73,8 @@
     .active {
       display: block;
     }
+    
+    
 
     @keyframes fade {
       from { opacity: 0; transform: translateY(10px); }
@@ -87,12 +89,12 @@
       align-items: center;
     }
 
-    .tab img {
-      max-width: 100%;
-      margin: 1.5rem 0;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
+  .tab img {
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
 
     .tab ul {
       font-size: 1.1rem;
@@ -142,24 +144,17 @@
 }
 
 .triangle {
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 86.6px solid yellow; /* amarillo Don Yeyo */
+  width: 100px;
+  height: 86.6px;
+  background: #f2c84b;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  text-align: center;
-}
-
-.triangle::before {
-  content: "5";
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   font-size: 1.8rem;
   font-weight: bold;
-  color: white;
+  color: black;
   font-family: 'Fredoka', sans-serif;
 }
     }
@@ -190,8 +185,7 @@
     <li>🌍 <strong>Las 5 claves de la OMS</strong> ayudan a prevenir la mayoría de las enfermedades transmitidas por alimentos.</li>
     <li>👨‍👩‍👧 <strong>Todos somos responsables</strong>: desde quien produce, hasta quien transporta, manipula y consume.</li>
   </ul>
-  
-  <img src="https://cdn-icons-png.flaticon.com/512/3145/3145765.png" alt="Imagen introducción">
+ 
 </section>
 
   <section class="tab">
@@ -206,7 +200,7 @@
   
   
 </ul>
-<img src="https://cdn-icons-png.flaticon.com/512/2913/2913465.png" alt="Imagen limpieza">
+<img src="https://www.paho.org/sites/default/files/styles/medium/public/clave2-mascara.jpg?itok=_djTjk1J">
 
   </section>
 
@@ -220,7 +214,7 @@
   <li>⚠️ <strong>Evite derrames</strong> de jugos de carnes sobre otros productos.</li>
 </ul>
 
-<img src="https://cdn-icons-png.flaticon.com/512/3824/3824473.png" alt="Imagen separación">
+<img src="https://www.paho.org/sites/default/files/styles/medium/public/clave3-mascara.jpg?itok=ZqyyWzhU">
 
 
 
@@ -235,7 +229,7 @@
   <li>🍳 <strong>Los huevos deben estar completamente cocidos</strong> (clara y yema firmes).</li>
   <li>🍲 <strong>Remueva bien</strong> los guisos o sopas para asegurar cocción pareja.</li>
 </ul>
-<img src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Imagen cocción">
+<img src="https://www.paho.org/sites/default/files/styles/medium/public/clave4.jpg?itok=LtfrxEnj">
 
   </section>
 
@@ -249,7 +243,7 @@
   <li>📦 <strong>Evite la sobrecarga de la heladera</strong>, así el frío se distribuye correctamente.</li>
   <li>🕒 <strong>Descongele siempre en la heladera</strong>, nunca a temperatura ambiente.</li>
 </ul>
-<img src="https://cdn-icons-png.flaticon.com/512/1046/1046757.png" alt="Imagen temperatura">
+<img src="https://www.paho.org/sites/default/files/styles/medium/public/clave5.jpg?itok=a4mf-CGZ">
 
   </section>
 
@@ -264,13 +258,11 @@
   <li>❌ <strong>Evite productos con envases dañados</strong> o que tengan mal olor, color o textura.</li>
 </ul>
 
-<img src="https://cdn-icons-png.flaticon.com/512/2913/2913435.png" alt="Imagen agua">
-
+<img src="https://www.paho.org/sites/default/files/styles/medium/public/clave-1-mascara.jpg?itok=xsIFhOop">
 
 <div class="triangle-wrapper">
   <div class="triangle">5</div>
 </div>
-
   </section>
 
   <script>
