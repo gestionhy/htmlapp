@@ -164,6 +164,8 @@ body {
   const producto = getUrlParameter('producto') || '';
   const lote = getUrlParameter('lote') || '';
   const copias = parseInt(getUrlParameter('copias')) || 1;
+  const codigoBase = getUrlParameter('codigo') || 'XXXX';
+
 
   const fecha = convertirFormatoFecha(fechaOriginal);
   const fechaRallado = convertirFormatoFecha(fechaOriginal);
@@ -186,6 +188,11 @@ body {
         const etiqueta = document.createElement('div');
         etiqueta.classList.add('etiqueta');
         etiqueta.innerHTML = etiquetaHTML;
+        const indexEtiqueta = i + j + 1; // N° correlativo de la etiqueta
+etiqueta.querySelector('.qr-container').insertAdjacentHTML(
+  'beforebegin',
+  `<div style="text-align:center; font-size:16pt; margin-top:5mm;"><strong>${indexEtiqueta}-${codigoBase}</strong></div>`
+);
 
         hoja.appendChild(etiqueta);
       }
@@ -214,6 +221,7 @@ body {
     document.querySelectorAll("#fechaBaja").forEach(el => el.textContent = fechaBaja);
     document.querySelectorAll("#fechaVencimiento").forEach(el => el.textContent = fechaVencimiento);
     document.querySelectorAll("#lote").forEach(el => el.textContent = lote);
+    
   }
 
   function autoPrint() {
