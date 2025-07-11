@@ -173,7 +173,8 @@
         document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
         
         // Generar texto para el código QR (usando valores ya convertidos)
-const qrData = `FECHA HORA: ${fecha}, PRODUCTO: ${producto}, CÓDIGO: ${codigoProducto}, UNIDADES: ${cantidadUn}, CAJONES: ${cantidadCajones}, CAJAS: ${cantidadCajas}, LOTE: ${lote}, FECHA DE VENCIMIENTO: ${fechaVencimiento}`;
+const qrData = `F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}`;
+
         
         // Función para imprimir automáticamente
         function autoPrint() {
