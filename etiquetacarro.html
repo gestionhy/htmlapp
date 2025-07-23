@@ -91,6 +91,11 @@
             <div class="data-label">UNIDADES:</div>
             <div class="data-value" id="cantidad_un">Cargando...</div>
         </div>
+
+        <div class="data-row">
+    <div class="data-label">PALLETS:</div>
+    <div class="data-value" id="pallet">Cargando...</div>
+</div>
         <div class="data-row">
             <div class="data-label">CAJONES:</div>
             <div class="data-value" id="cantidad_cajones">Cargando...</div>
@@ -155,6 +160,8 @@
         const fecha = convertirFormatoFecha(fechaOriginal);
         const producto = getUrlParameter('producto') || '';
         const codigoProducto = getUrlParameter('codigo_producto') || '';
+        const pallet = getUrlParameter('pallet') || '';
+
 
         const cantidadUn = getUrlParameter('cantidad_un') || '';
         const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
@@ -170,6 +177,7 @@
         document.getElementById('cantidad_cajones').textContent = cantidadCajones;
         document.getElementById('cantidad_cajas').textContent = cantidadCajas;
         document.getElementById('lote').textContent = lote;
+        document.getElementById('pallet').textContent = pallet;
         document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
         
         // Generar texto para el código QR (usando valores ya convertidos)
