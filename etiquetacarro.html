@@ -187,7 +187,8 @@
         document.getElementById('unidades').textContent = unidades;
         
         // Generar texto para el código QR (usando valores ya convertidos)
-const qrData = `F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}`;
+const qrData = `F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
+
 
         
         // Función para imprimir automáticamente
