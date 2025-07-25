@@ -101,6 +101,10 @@
             <div class="data-value" id="cantidad_cajones">Cargando...</div>
         </div>
         <div class="data-row">
+            <div class="data-label">UNIDADES ADICIONALES:</div>
+            <div class="data-value" id="unidades">Cargando...</div>
+        </div>
+        <div class="data-row">
             <div class="data-label">CAJAS:</div>
             <div class="data-value" id="cantidad_cajas">Cargando...</div>
         </div>
@@ -167,6 +171,7 @@
         const cantidadCajones = getUrlParameter('cantidad_cajones') || '';
         const cantidadCajas = getUrlParameter('cantidad_cajas') || '';
         const lote = getUrlParameter('lote') || '';
+        const unidades = getUrlParameter('unidades') || '';
         const fechaVencimiento = convertirFormatoFecha(fechaVencimientoOriginal);
         
         // Aplicar datos a la etiqueta
@@ -179,6 +184,7 @@
         document.getElementById('lote').textContent = lote;
         document.getElementById('pallet').textContent = pallet;
         document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
+        document.getElementById('unidades').textContent = unidades;
         
         // Generar texto para el código QR (usando valores ya convertidos)
 const qrData = `F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}`;
