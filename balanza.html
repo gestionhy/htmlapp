@@ -14,12 +14,26 @@
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      max-width: 95%;
+      max-width: 98%;
       margin: auto;
       overflow-x: auto;
     }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header img {
+      height: 60px;
+    }
     h1 {
       color: #800020;
+    }
+    .next-date {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
     }
     table {
       width: 100%;
@@ -45,8 +59,14 @@
 </head>
 <body>
   <div class="card">
-    <h1>Historial de calibración - Balanza <span id="balanza"></span></h1>
+    <div class="header">
+      <img src="https://drive.google.com/uc?id=1jgxshv3Edd8LIFtM5eJwdn5dX7ZZrT5G" alt="Don Yeyo Logo">
+      <h1>Historial de calibración - Balanza <span id="balanza"></span></h1>
+    </div>
+
     <div id="mensaje" class="error"></div>
+    <div class="next-date" id="proxima"></div>
+
     <table id="tabla" style="display:none">
       <thead id="thead"></thead>
       <tbody id="tbody"></tbody>
@@ -74,7 +94,6 @@
             return;
           }
 
-          // Filtrar por balanza
           const registros = filas.slice(1).filter(row => row[balanzaColIndex]?.trim() === balanzaId);
 
           if (registros.length === 0) {
@@ -82,20 +101,28 @@
             return;
           }
 
-          // Ordenar por fecha descendente
           const fechaIndex = headers.findIndex(h => h.toLowerCase() === "fecha");
-          registros.sort((a, b) => new Date(b[fechaIndex]) - new Date(a[fechaIndex]));
+
+          // Ordenar ASCENDENTE (de más vieja a más nueva)
+          registros.sort((a, b) => new Date(a[fechaIndex]) - new Date(b[fechaIndex]));
+
+          // Calcular próxima fecha de calibración (última + 60 días)
+          const ultimaFechaStr = registros[registros.length - 1][fechaIndex];
+          const ultimaFecha = new Date(ultimaFechaStr);
+          if (!isNaN(ultimaFecha)) {
+            const proxima = new Date(ultimaFecha);
+            proxima.setDate(proxima.getDate() + 60);
+            document.getElementById("proxima").textContent = `📅 Fecha de próxima calibración sugerida: ${proxima.toLocaleDateString('es-AR')}`;
+          }
 
           // Mostrar hasta 5 registros
           const tabla = document.getElementById("tabla");
           const thead = document.getElementById("thead");
           const tbody = document.getElementById("tbody");
 
-          // Encabezados
           thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
 
-          // Filas
-          registros.slice(0, 5).forEach(row => {
+          registros.slice(-5).forEach(row => {
             const tr = document.createElement("tr");
             row.forEach((cell, i) => {
               const td = document.createElement("td");
@@ -108,10 +135,9 @@
           tabla.style.display = "table";
         })
         .catch(err => {
-          document.getElementById("mensaje").innerText = "❌ Error al cargar los datos.";
+          document.getElementById("mensaje").textContent = "❌ Error al cargar los datos.";
         });
     }
   </script>
 </body>
 </html>
-
