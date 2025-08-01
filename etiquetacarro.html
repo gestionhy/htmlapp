@@ -120,7 +120,7 @@
     
     <div class="qr-container">
     <div style="text-align: center;">
-        <div id="codigo_unico" style="font-size: 32px; font-weight: bold; margin-bottom: 10px;"></div>
+        <div id="codigo_unico" style="font-size: 16px; font-weight: bold; margin-bottom: 10px;"></div>
         <div id="qrcode"></div>
     </div>
 </div>
@@ -195,7 +195,7 @@ function generarCodigoUnico() {
 }
 
 const codigoUnico = generarCodigoUnico();
-document.getElementById('codigo_unico').textContent = `Código: ${codigoUnico}`;
+document.getElementById('codigo_unico').textContent = codigoUnico;
         
         // Generar texto para el código QR (usando valores ya convertidos)
 const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
