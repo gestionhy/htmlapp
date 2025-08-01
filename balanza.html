@@ -107,24 +107,16 @@
           registros.sort((a, b) => new Date(a[fechaIndex]) - new Date(b[fechaIndex]));
 
           // Calcular próxima fecha de calibración (última + 60 días)
+
           const ultimaFechaStr = registros[registros.length - 1][fechaIndex];
 const ultimaFecha = new Date(ultimaFechaStr);
 
-if (fechaValida instanceof Date && !isNaN(fechaValida)) {
-  const proxima = new Date(fechaValida);
+if (!isNaN(ultimaFecha)) {
+  const proxima = new Date(ultimaFecha);
   proxima.setDate(proxima.getDate() + 60);
   document.getElementById("proxima").textContent =
     `📅 Fecha de próxima calibración sugerida: ${proxima.toLocaleDateString('es-AR')}`;
 }
-
-
-          
-          
-          if (!isNaN(ultimaFecha)) {
-            const proxima = new Date(ultimaFecha);
-            proxima.setDate(proxima.getDate() + 60);
-            document.getElementById("proxima").textContent = `📅 Fecha de próxima calibración sugerida: ${proxima.toLocaleDateString('es-AR')}`;
-          }
 
           // Mostrar hasta 5 registros
           const tabla = document.getElementById("tabla");
