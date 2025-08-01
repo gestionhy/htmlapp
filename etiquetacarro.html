@@ -119,8 +119,11 @@
     </div>
     
     <div class="qr-container">
+    <div style="text-align: center;">
+        <div id="codigo_unico" style="font-size: 32px; font-weight: bold; margin-bottom: 10px;"></div>
         <div id="qrcode"></div>
     </div>
+</div>
     
     <script>
         // Función para obtener parámetros de la URL
@@ -185,9 +188,17 @@
         document.getElementById('pallet').textContent = pallet;
         document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
         document.getElementById('unidades').textContent = unidades;
+
+        // Generar código único de 8 caracteres
+function generarCodigoUnico() {
+    return Math.random().toString(36).substring(2, 10).toUpperCase(); // Ej: 'A1B2C3D4'
+}
+
+const codigoUnico = generarCodigoUnico();
+document.getElementById('codigo_unico').textContent = `Código: ${codigoUnico}`;
         
         // Generar texto para el código QR (usando valores ya convertidos)
-const qrData = `F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
+const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
 
 
         
