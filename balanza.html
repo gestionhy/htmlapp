@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Calibraciones</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 95%;
+      margin: auto;
+      overflow-x: auto;
+    }
+    h1 {
+      color: #800020;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background: #800020;
+      color: white;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Historial de calibración - Balanza <span id="balanza"></span></h1>
+    <div id="mensaje" class="error"></div>
+    <table id="tabla" style="display:none">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const balanzaId = new URLSearchParams(window.location.search).get("balanza");
+    document.getElementById("balanza").innerText = balanzaId || "(no especificada)";
+
+    if (!balanzaId) {
+      document.getElementById("mensaje").innerText = "❌ No se especificó el parámetro 'balanza' en la URL.";
+    } else {
+      const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQX2-1Ar_AxL1GqFWGKH5AlXyJrhvbDQ5GlkoyQx5jfIS2Z-uzht_s31a-_bToONPqZTTYvfbrQw3JH/pub?gid=855857351&single=true&output=csv";
+
+      fetch(csvURL)
+        .then(res => res.text())
+        .then(csv => {
+          const filas = csv.split("\n").map(l => l.split(","));
+          const headers = filas[0].map(h => h.trim());
+          const balanzaColIndex = headers.findIndex(h => h.includes("Nº Balanza") || h.includes("CODIGO"));
+
+          if (balanzaColIndex === -1) {
+            document.getElementById("mensaje").innerText = "❌ No se encontró la columna de Nº de Balanza.";
+            return;
+          }
+
+          // Filtrar por balanza
+          const registros = filas.slice(1).filter(row => row[balanzaColIndex]?.trim() === balanzaId);
+
+          if (registros.length === 0) {
+            document.getElementById("mensaje").innerText = "⚠️ No se encontraron registros para esta balanza.";
+            return;
+          }
+
+          // Ordenar por fecha descendente
+          const fechaIndex = headers.findIndex(h => h.toLowerCase() === "fecha");
+          registros.sort((a, b) => new Date(b[fechaIndex]) - new Date(a[fechaIndex]));
+
+          // Mostrar hasta 5 registros
+          const tabla = document.getElementById("tabla");
+          const thead = document.getElementById("thead");
+          const tbody = document.getElementById("tbody");
+
+          // Encabezados
+          thead.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+          // Filas
+          registros.slice(0, 5).forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach((cell, i) => {
+              const td = document.createElement("td");
+              td.textContent = cell || "-";
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+
+          tabla.style.display = "table";
+        })
+        .catch(err => {
+          document.getElementById("mensaje").innerText = "❌ Error al cargar los datos.";
+        });
+    }
+  </script>
+</body>
+</html>
 
