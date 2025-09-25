@@ -60,10 +60,12 @@
             margin-top: 30px;
         }
         #qrcode {
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: white;
-        }
+    border: none;
+    padding: 0;
+    background-color: white;
+    width: auto;
+    height: auto;
+}
         @media print {
             body {
                 width: 210mm;
@@ -213,8 +215,8 @@ const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U
                 // Generar código QR
                 new QRCode(document.getElementById("qrcode"), {
                     text: qrData,
-                    width: 200,
-                    height: 200,
+                    width: 400,
+                    height: 400,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
