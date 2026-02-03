@@ -3,112 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etiqueta Rack - Don Yeyo (Full Data)</title>
+    <title>Etiqueta Rack - Don Yeyo (Ajuste Perfecto)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @page {
             size: A4;
-            margin: 0;
+            margin: 0; /* Fundamental para que no agregue hoja extra */
         }
         * {
             box-sizing: border-box;
             -webkit-print-color-adjust: exact;
         }
-        body {
+        html, body {
             margin: 0;
-            padding: 5mm; /* Margen de seguridad mínimo */
+            padding: 0;
             width: 210mm;
-            height: 296mm; /* 1mm menos para evitar el salto de página fantasma */
-            font-family: 'Arial Black', sans-serif;
+            height: 297mm; /* Altura exacta A4 */
+            font-family: 'Arial Black', Gadget, sans-serif;
+        }
+        body {
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Corta cualquier exceso */
+            padding: 4mm; /* Margen mínimo visual */
+            overflow: hidden; /* Corta cualquier desborde */
         }
 
-        /* 1. SECCIÓN PRODUCTO (25% alto) */
+        /* 1. PRODUCTO: Se estira para ocupar todo el espacio sobrante */
         .zona-producto {
-            height: 25%;
+            flex-grow: 1; /* Ocupa el espacio libre */
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 5px solid black;
+            border: 5px solid black;
+            border-bottom: 0; /* Para unir con el siguiente */
             text-align: center;
+            padding: 10px;
         }
         #producto {
-            font-size: 60pt; /* Gigante pero seguro */
+            font-size: 70pt; 
             line-height: 0.9;
             text-transform: uppercase;
             word-wrap: break-word;
-            max-height: 100%;
-            overflow: hidden;
         }
 
-        /* 2. SECCIÓN CRÍTICA: LOTE Y VENCIMIENTO (45% alto) */
+        /* 2. CRÍTICA: Prioridad alta visual */
         .zona-critica {
-            height: 45%;
+            flex-shrink: 0; /* No se achica */
+            height: 35%; /* Altura controlada */
             display: flex;
             flex-direction: column;
+            border: 5px solid black;
+            border-bottom: 0;
         }
         .bloque-critico {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
             border-bottom: 4px solid black;
-            padding: 5px 20px;
+            position: relative;
+        }
+        .bloque-critico:last-child {
+            border-bottom: none;
         }
         .etiqueta-negra {
             background-color: black;
             color: white;
-            font-size: 15pt;
-            padding: 5px 15px;
-            width: fit-content;
-           
+            font-size: 18pt;
+            padding: 2px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         .dato-gigante {
-            font-size: 75pt;
+            font-size: 80pt;
             text-align: center;
             line-height: 1;
+            margin-top: 15px;
         }
 
-        /* 3. SECCIÓN DATOS SECUNDARIOS (20% alto) */
-        /* Aquí están TODOS los campos originales */
+        /* 3. DATOS: Grilla compacta */
         .zona-datos {
-            height: 20%;
+            flex-shrink: 0;
+            height: auto;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-            gap: 10px;
-            padding: 15px 0;
-            border-bottom: 2px solid black;
+            grid-template-columns: repeat(3, 1fr);
+            border: 5px solid black;
+            border-bottom: 0;
         }
         .dato-item {
-            border: 2px solid #ccc;
+            border-right: 2px solid black;
+            border-bottom: 2px solid black;
             padding: 5px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             text-align: center;
+            height: 70px; /* Altura fija para controlar espacio */
         }
-        .dato-titulo {
-            font-size: 12pt;
-            color: #555;
-            font-weight: normal;
+        /* Quitar bordes derechos de la ultima columna */
+        .dato-item:nth-child(3n) {
+            border-right: none;
         }
-        .dato-valor {
-            font-size: 22pt; /* Bien legible */
-            font-weight: bold;
+        /* Quitar bordes inferiores de la ultima fila */
+        .dato-item:nth-last-child(-n+3) {
+            border-bottom: none;
         }
 
-        /* 4. FOOTER Y QR (10% alto) */
+        .dato-titulo {
+            font-size: 10pt;
+            color: #333;
+            font-weight: normal;
+            font-family: Arial, sans-serif;
+        }
+        .dato-valor {
+            font-size: 18pt;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        /* 4. FOOTER: Altura fija para proteger el QR */
         .footer {
-            height: 10%;
+            flex-shrink: 0;
+            height: 170px; /* Espacio reservado para QR de 150px + padding */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 10px;
+            border: 5px solid black;
+            padding: 0 20px;
         }
         .info-footer {
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Asegurar que el QR no rompa nada */
+        #qrcode {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -152,20 +190,20 @@
         </div>
         <div class="dato-item">
             <span class="dato-titulo">FECHA ELAB/IMP</span>
-            <span class="dato-valor" id="fecha" style="font-size: 16pt;">---</span>
+            <span class="dato-valor" id="fecha">---</span>
         </div>
     </div>
 
     <div class="footer">
         <div class="info-footer">
-            <div id="codigo_unico" style="font-weight: bold; font-size: 14pt; margin-bottom: 5px;"></div>
-            <div style="font-size: 10pt;">Don Yeyo S.A. - Control de Procesos</div>
+            <div id="codigo_unico" style="font-weight: bold; font-size: 20pt; margin-bottom: 5px;"></div>
+            <div style="font-size: 12pt;">Don Yeyo S.A. - Planta Panificados</div>
+            <div style="font-size: 10pt; margin-top: 5px;">Control de Procesos - Ingeniería</div>
         </div>
         <div id="qrcode"></div>
     </div>
 
     <script>
-        // --- LÓGICA ORIGINAL ---
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -184,53 +222,53 @@
             return fechaTexto;
         }
 
-        // Asignación de variables (TODAS LAS ORIGINALES)
+        // Recuperar datos
         const fecha = convertirFormatoFecha(getUrlParameter('fecha'));
         const producto = getUrlParameter('producto').toUpperCase();
-        const codigoProducto = getUrlParameter('codigo_producto'); // Se mantiene en QR aunque no se muestre en grande
-        const cantidadUn = getUrlParameter('cantidad_un'); // EL QUE FALTABA
+        const codigoProducto = getUrlParameter('codigo_producto');
+        const cantidadUn = getUrlParameter('cantidad_un');
         const cantidadCajones = getUrlParameter('cantidad_cajones');
         const cantidadCajas = getUrlParameter('cantidad_cajas');
         const lote = getUrlParameter('lote').toUpperCase();
-        const unidades = getUrlParameter('unidades'); // Unidades adicionales
+        const unidades = getUrlParameter('unidades'); 
         const fechaVencimiento = convertirFormatoFecha(getUrlParameter('fecha_vencimiento'));
         const pallet = getUrlParameter('pallet');
 
-        // Renderizado en HTML
+        // Asignar al DOM
         document.getElementById('fecha').textContent = fecha;
         document.getElementById('producto').textContent = producto;
         document.getElementById('lote').textContent = lote;
         document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
-        
-        // Datos secundarios
         document.getElementById('cantidad_un').textContent = cantidadUn;
         document.getElementById('pallet').textContent = pallet;
         document.getElementById('cantidad_cajones').textContent = cantidadCajones;
         document.getElementById('cantidad_cajas').textContent = cantidadCajas;
         document.getElementById('unidades').textContent = unidades;
 
-        // Código único y QR
+        // ID y QR
         const codigoUnico = Math.random().toString(36).substring(2, 10).toUpperCase();
         document.getElementById('codigo_unico').textContent = "ID: " + codigoUnico;
 
-       // Generar texto para el código QR (usando valores ya convertidos)
-const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
-
+        // String QR completo
+        const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
 
         window.onload = function() {
+            // Generar QR de 150x150 como solicitado
             new QRCode(document.getElementById("qrcode"), {
                 text: qrData,
                 width: 150,
                 height: 150,
                 correctLevel: QRCode.CorrectLevel.L
             });
-            setTimeout(() => { window.print(); }, 600);
+            
+            // Retardo leve para asegurar renderizado antes de imprimir
+            setTimeout(() => { window.print(); }, 800);
         };
 
         window.onafterprint = function () {
             document.body.innerHTML = `<div style="text-align: center; padding-top: 50px; font-family: sans-serif;">
-                <h1>Etiqueta Lista ✅</h1>
-                <p>Podés cerrar la pestaña del navegador 😊</p>
+                <h1>✅ Etiqueta enviada</h1>
+                <p>Cerrar pestaña para continuar.</p>
             </div>`;
         };
     </script>
