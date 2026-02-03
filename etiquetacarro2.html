@@ -213,7 +213,9 @@
         const codigoUnico = Math.random().toString(36).substring(2, 10).toUpperCase();
         document.getElementById('codigo_unico').textContent = "ID: " + codigoUnico;
 
-        const qrData = `ID=${codigoUnico}|P=${producto}|L=${lote}|V=${fechaVencimiento}|T=${cantidadUn}`;
+       // Generar texto para el código QR (usando valores ya convertidos)
+const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
+
 
         window.onload = function() {
             new QRCode(document.getElementById("qrcode"), {
