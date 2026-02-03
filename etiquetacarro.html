@@ -232,6 +232,7 @@
         const unidades = getUrlParameter('unidades'); 
         const fechaVencimiento = convertirFormatoFecha(getUrlParameter('fecha_vencimiento'));
         const pallet = getUrlParameter('pallet');
+        const uniqueid = getUrlParameter('uniqueid');
 
         // Asignar al DOM
         document.getElementById('fecha').textContent = fecha;
@@ -243,11 +244,10 @@
         document.getElementById('cantidad_cajones').textContent = cantidadCajones;
         document.getElementById('cantidad_cajas').textContent = cantidadCajas;
         document.getElementById('unidades').textContent = unidades;
+        document.getElementById('codigo_unico').textContent = "ID: " + uniqueid;
 
-        // ID y QR
-        const codigoUnico = Math.random().toString(36).substring(2, 10).toUpperCase();
-        document.getElementById('codigo_unico').textContent = "ID: " + codigoUnico;
 
+       
         // String QR completo
         const qrData = `ID=${codigoUnico}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
 
