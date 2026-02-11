@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etiqueta Pallets - Panificados</title>
+    <title>Etiqueta Pallets - Dinámica</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @page {
             size: A4;
-            margin: 0; 
+            margin: 0;
         }
         * {
             box-sizing: border-box;
@@ -18,192 +18,160 @@
             margin: 0;
             padding: 0;
             width: 210mm;
-            height: 297mm;
+            height: 296mm; /* Ajuste fino para evitar salto de hoja */
             font-family: 'Arial Black', Gadget, sans-serif;
             background-color: white;
+            overflow: hidden;
         }
         body {
             display: flex;
             flex-direction: column;
-            padding: 4mm;
-            overflow: hidden;
         }
 
-        /* Contenedor principal para mantener los bordes prolijos */
-        .borde-principal {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border: 5px solid black;
-        }
-
-        /* 1. PRODUCTO: GIGANTE (Ocupa la mayor parte de arriba) */
+        /* 1. ZONA PRODUCTO: GIGANTE */
         .zona-producto {
-            flex-grow: 1;
+            height: 40%; /* 40% de la hoja */
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 5px solid black;
             text-align: center;
             padding: 10px;
+            border-bottom: 4px solid black;
         }
         #producto {
-            font-size: 120pt; 
-            line-height: 0.85;
+            font-size: 130pt; /* Aumentado por falta de borde */
+            line-height: 0.8;
             text-transform: uppercase;
             word-wrap: break-word;
         }
 
-        /* 2. LOTE: GIGANTE (Justo abajo del producto) */
-        .zona-lote {
+        /* 2. ZONA LOTE Y FECHAS: Importante pero compacta */
+        .zona-intermedia {
             height: 25%;
+            display: flex;
+            flex-direction: row;
+            border-bottom: 4px solid black;
+        }
+        
+        /* LOTE a la izquierda, bien grande */
+        .bloque-lote {
+            width: 60%;
+            border-right: 4px solid black;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-bottom: 5px solid black;
             position: relative;
         }
-        .etiqueta-negra {
+        .etiqueta-flotante {
             background-color: black;
             color: white;
-            font-size: 24pt;
-            padding: 5px 25px;
+            font-size: 16pt;
+            padding: 2px 15px;
             position: absolute;
             top: 0;
             left: 0;
         }
         #lote {
-            font-size: 110pt; 
-            text-align: center;
-            line-height: 1;
+            font-size: 90pt;
             margin-top: 20px;
         }
 
-        /* 3. ZONA INFERIOR: Dividida en Datos chicos (izq) y QR gigante (der) */
-        .zona-inferior {
-            height: 35%; 
+        /* Fechas a la derecha, apiladas */
+        .bloque-fechas {
+            width: 40%;
             display: flex;
+            flex-direction: column;
         }
-
-        /* Datos chicos a la izquierda */
-        .zona-datos {
-            width: 55%;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columnas para compactar */
-            border-right: 5px solid black;
-            align-content: start;
-        }
-        .dato-item {
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-            padding: 6px;
+        .dato-fecha {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            text-align: center;
-            height: 60px;
+            align-items: center;
+            border-bottom: 2px solid black;
         }
-        /* Limpieza de bordes internos en la grilla */
-        .dato-item:nth-child(2n) { border-right: none; }
+        .dato-fecha:last-child { border-bottom: none; }
         
-        .dato-titulo {
-            font-size: 9pt;
-            color: #333;
-            font-family: Arial, sans-serif;
-        }
-        .dato-valor {
-            font-size: 14pt;
-            font-weight: bold;
+        .titulo-fecha { font-size: 10pt; font-family: Arial, sans-serif; color: #333; }
+        .valor-fecha { font-size: 22pt; font-weight: bold; }
+
+        /* 3. ZONA INFERIOR: Dinámica + QR */
+        .zona-inferior {
+            height: 35%;
+            display: flex;
+            flex-direction: row;
         }
 
-        /* QR y Footer a la derecha */
-        .zona-qr-footer {
-            width: 45%;
+        /* Aquí va la magia dinámica */
+        #contenedor-cantidades {
+            width: 60%; /* Espacio para datos */
+            display: flex;
+            flex-direction: column; /* Apilados verticalmente */
+            border-right: 4px solid black;
+        }
+        
+        .item-cantidad {
+            flex: 1; /* Se estira para ocupar todo el alto disponible */
+            display: flex;
+            flex-direction: row; /* Etiqueta izq, numero der */
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 2px solid black;
+        }
+        .item-cantidad:last-child { border-bottom: none; }
+
+        .cant-label { font-size: 20pt; font-family: Arial, sans-serif; text-align: left;}
+        .cant-valor { font-size: 55pt; font-weight: bold; text-align: right;}
+
+        /* QR y Footer */
+        .zona-qr {
+            width: 40%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            padding: 10px;
-        }
-        #qrcode {
-            display: flex;
-            align-items: center;
             justify-content: center;
             padding: 10px;
-            background: white;
         }
-        .info-footer {
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-        #codigo_unico {
-            font-weight: bold;
-            font-size: 16pt;
-        }
-        .empresa {
-            font-size: 10pt;
-            margin-top: 5px;
-        }
+        #codigo_unico { font-size: 12pt; font-family: Arial; margin-bottom: 5px; }
+
     </style>
 </head>
 <body>
-    <div class="borde-principal">
-        
-        <div class="zona-producto">
-            <div id="producto">PRODUCTO</div>
-        </div>
 
-        <div class="zona-lote">
-            <div class="etiqueta-negra">LOTE</div>
+    <div class="zona-producto">
+        <div id="producto">PRODUCTO</div>
+    </div>
+
+    <div class="zona-intermedia">
+        <div class="bloque-lote">
+            <div class="etiqueta-flotante">LOTE</div>
             <div id="lote">---</div>
         </div>
-
-        <div class="zona-inferior">
-            
-            <div class="zona-datos">
-                <div class="dato-item">
-                    <span class="dato-titulo">VENCIMIENTO</span>
-                    <span class="dato-valor" id="fecha_vencimiento">---</span>
-                </div>
-                <div class="dato-item">
-                    <span class="dato-titulo">FECHA ELAB/IMP</span>
-                    <span class="dato-valor" id="fecha">---</span>
-                </div>
-                <div class="dato-item">
-                    <span class="dato-titulo">TOTAL UNIDADES</span>
-                    <span class="dato-valor" id="cantidad_un">---</span>
-                </div>
-                <div class="dato-item">
-                    <span class="dato-titulo">CANT. PALLETS</span>
-                    <span class="dato-valor" id="pallet">---</span>
-                </div>
-                <div class="dato-item">
-                    <span class="dato-titulo">CANT. CAJONES</span>
-                    <span class="dato-valor" id="cantidad_cajones">---</span>
-                </div>
-                <div class="dato-item">
-                    <span class="dato-titulo">CANT. CAJAS</span>
-                    <span class="dato-valor" id="cantidad_cajas">---</span>
-                </div>
-                <div class="dato-item" style="grid-column: span 2; border-bottom: none;">
-                    <span class="dato-titulo">UNID. ADICIONALES</span>
-                    <span class="dato-valor" id="unidades">---</span>
-                </div>
+        <div class="bloque-fechas">
+            <div class="dato-fecha">
+                <span class="titulo-fecha">VENCIMIENTO</span>
+                <span class="valor-fecha" id="fecha_vencimiento">--/--/--</span>
             </div>
-
-            <div class="zona-qr-footer">
-                <div id="qrcode"></div>
-                <div class="info-footer">
-                    <div id="codigo_unico"></div>
-                    <div class="empresa">Don Yeyo S.A. - Planta Panificados</div>
-                </div>
+            <div class="dato-fecha">
+                <span class="titulo-fecha">ELABORACIÓN</span>
+                <span class="valor-fecha" id="fecha">--/--/--</span>
             </div>
+        </div>
+    </div>
 
+    <div class="zona-inferior">
+        <div id="contenedor-cantidades"></div>
+
+        <div class="zona-qr">
+            <div id="codigo_unico"></div>
+            <div id="qrcode"></div>
         </div>
     </div>
 
     <script>
+        // --- Funciones Utiles ---
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -211,60 +179,86 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        function convertirFormatoFecha(fechaTexto) {
-            if (!fechaTexto || fechaTexto.trim() === '') return fechaTexto;
-            const regexMMDD = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-            const matchMMDD = fechaTexto.match(regexMMDD);
-            if (matchMMDD) {
-                const mes = matchMMDD[1]; const dia = matchMMDD[2]; const anio = matchMMDD[3];
-                if (parseInt(mes) <= 12) return `${dia}/${mes}/${anio}`;
-            }
-            return fechaTexto;
+        function convertirFecha(f) {
+            if (!f) return '';
+            const match = f.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (match) return `${match[2]}/${match[1]}/${match[3]}`; // Mes/Dia fix si viene invertido, ajustar segun necesidad real
+            return f; 
         }
 
-        const fecha = convertirFormatoFecha(getUrlParameter('fecha'));
-        const producto = getUrlParameter('producto').toUpperCase() || 'PRODUCTO';
-        const codigoProducto = getUrlParameter('codigo_producto');
-        const cantidadUn = getUrlParameter('cantidad_un');
-        const cantidadCajones = getUrlParameter('cantidad_cajones');
-        const cantidadCajas = getUrlParameter('cantidad_cajas');
-        const lote = getUrlParameter('lote').toUpperCase() || 'LOTE';
-        const unidades = getUrlParameter('unidades'); 
-        const fechaVencimiento = convertirFormatoFecha(getUrlParameter('fecha_vencimiento'));
-        const pallet = getUrlParameter('pallet');
-        const uniqueid = getUrlParameter('uniqueid') || '000000';
+        // --- Lectura de Datos ---
+        // Asumimos que si no viene parametro es 0
+        const rawPallet = getUrlParameter('pallet');
+        const rawCajones = getUrlParameter('cantidad_cajones');
+        const rawCajas = getUrlParameter('cantidad_cajas');
+        const rawUnidades = getUrlParameter('unidades');
 
-        document.getElementById('fecha').textContent = fecha;
-        document.getElementById('producto').textContent = producto;
-        document.getElementById('lote').textContent = lote;
-        document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
-        document.getElementById('cantidad_un').textContent = cantidadUn;
-        document.getElementById('pallet').textContent = pallet;
-        document.getElementById('cantidad_cajones').textContent = cantidadCajones;
-        document.getElementById('cantidad_cajas').textContent = cantidadCajas;
-        document.getElementById('unidades').textContent = unidades;
-        document.getElementById('codigo_unico').textContent = "ID: " + uniqueid;
+        const datos = {
+            producto: getUrlParameter('producto').toUpperCase() || 'SIN NOMBRE',
+            lote: getUrlParameter('lote').toUpperCase() || '---',
+            fechaVenc: getUrlParameter('fecha_vencimiento') || '',
+            fechaElab: getUrlParameter('fecha') || '',
+            id: getUrlParameter('uniqueid') || '',
+            // Convertimos a numero para verificar si son > 0
+            cantidades: [
+                { label: 'PALLETS', val: rawPallet, num: Number(rawPallet) },
+                { label: 'CAJONES', val: rawCajones, num: Number(rawCajones) },
+                { label: 'CAJAS', val: rawCajas, num: Number(rawCajas) },
+                { label: 'UNID. ADIC.', val: rawUnidades, num: Number(rawUnidades) }
+            ],
+            // Datos extra para el QR string
+            codProd: getUrlParameter('codigo_producto'),
+            cantUn: getUrlParameter('cantidad_un')
+        };
 
-        const qrData = `ID=${uniqueid}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
+        // --- Renderizado Estático ---
+        document.getElementById('producto').innerText = datos.producto;
+        document.getElementById('lote').innerText = datos.lote;
+        document.getElementById('fecha_vencimiento').innerText = datos.fechaVenc;
+        document.getElementById('fecha').innerText = datos.fechaElab;
+        document.getElementById('codigo_unico').innerText = "ID: " + datos.id;
+
+        // --- Renderizado Dinámico de Cantidades ---
+        const container = document.getElementById('contenedor-cantidades');
+        let camposActivos = 0;
+
+        datos.cantidades.forEach(item => {
+            // Solo mostramos si es un numero valido y mayor a 0
+            if (item.num && item.num > 0) {
+                camposActivos++;
+                const div = document.createElement('div');
+                div.className = 'item-cantidad';
+                div.innerHTML = `
+                    <span class="cant-label">${item.label}</span>
+                    <span class="cant-valor">${item.val}</span>
+                `;
+                container.appendChild(div);
+            }
+        });
+
+        // Si por casualidad todo es 0, mostramos algo para que no quede hueco
+        if (camposActivos === 0) {
+            container.innerHTML = `<div class="item-cantidad" style="justify-content:center"><span class="cant-label">SIN CANTIDADES</span></div>`;
+        }
+
+        // --- Generación QR ---
+        const qrString = `ID=${datos.id}|F=${datos.fechaElab}|P=${datos.producto}|L=${datos.lote}|V=${datos.fechaVenc}|T=${datos.cantidades[0].val}|J=${datos.cantidades[1].val}|X=${datos.cantidades[2].val}|A=${datos.cantidades[3].val}`;
 
         window.onload = function() {
-            // El código QR ahora es casi el doble de grande
             new QRCode(document.getElementById("qrcode"), {
-                text: qrData,
-                width: 280,
-                height: 280,
+                text: qrString,
+                width: 250,
+                height: 250,
                 correctLevel: QRCode.CorrectLevel.L
             });
-            
+
             setTimeout(() => { window.print(); }, 800);
         };
 
         window.onafterprint = function () {
-            document.body.innerHTML = `<div style="text-align: center; padding-top: 50px; font-family: sans-serif;">
-                <h1>✅ Etiqueta impresa</h1>
-                <p>Cerrar pestaña para continuar.</p>
-            </div>`;
+            document.body.innerHTML = `<div style="text-align:center; padding-top:50px; font-family:sans-serif;"><h1>✅ Fin</h1></div>`;
         };
+
     </script>
 </body>
 </html>
