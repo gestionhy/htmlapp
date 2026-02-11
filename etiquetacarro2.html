@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta Pallets - Panificados</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: 297mm;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            background-color: white;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            padding: 4mm;
+            overflow: hidden;
+        }
+
+        /* Contenedor principal para mantener los bordes prolijos */
+        .borde-principal {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 5px solid black;
+        }
+
+        /* 1. PRODUCTO: GIGANTE (Ocupa la mayor parte de arriba) */
+        .zona-producto {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 5px solid black;
+            text-align: center;
+            padding: 10px;
+        }
+        #producto {
+            font-size: 120pt; 
+            line-height: 0.85;
+            text-transform: uppercase;
+            word-wrap: break-word;
+        }
+
+        /* 2. LOTE: GIGANTE (Justo abajo del producto) */
+        .zona-lote {
+            height: 25%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 5px solid black;
+            position: relative;
+        }
+        .etiqueta-negra {
+            background-color: black;
+            color: white;
+            font-size: 24pt;
+            padding: 5px 25px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #lote {
+            font-size: 110pt; 
+            text-align: center;
+            line-height: 1;
+            margin-top: 20px;
+        }
+
+        /* 3. ZONA INFERIOR: Dividida en Datos chicos (izq) y QR gigante (der) */
+        .zona-inferior {
+            height: 35%; 
+            display: flex;
+        }
+
+        /* Datos chicos a la izquierda */
+        .zona-datos {
+            width: 55%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas para compactar */
+            border-right: 5px solid black;
+            align-content: start;
+        }
+        .dato-item {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            height: 60px;
+        }
+        /* Limpieza de bordes internos en la grilla */
+        .dato-item:nth-child(2n) { border-right: none; }
+        
+        .dato-titulo {
+            font-size: 9pt;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+        .dato-valor {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+
+        /* QR y Footer a la derecha */
+        .zona-qr-footer {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 10px;
+        }
+        #qrcode {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: white;
+        }
+        .info-footer {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #codigo_unico {
+            font-weight: bold;
+            font-size: 16pt;
+        }
+        .empresa {
+            font-size: 10pt;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="borde-principal">
+        
+        <div class="zona-producto">
+            <div id="producto">PRODUCTO</div>
+        </div>
+
+        <div class="zona-lote">
+            <div class="etiqueta-negra">LOTE</div>
+            <div id="lote">---</div>
+        </div>
+
+        <div class="zona-inferior">
+            
+            <div class="zona-datos">
+                <div class="dato-item">
+                    <span class="dato-titulo">VENCIMIENTO</span>
+                    <span class="dato-valor" id="fecha_vencimiento">---</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-titulo">FECHA ELAB/IMP</span>
+                    <span class="dato-valor" id="fecha">---</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-titulo">TOTAL UNIDADES</span>
+                    <span class="dato-valor" id="cantidad_un">---</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-titulo">CANT. PALLETS</span>
+                    <span class="dato-valor" id="pallet">---</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-titulo">CANT. CAJONES</span>
+                    <span class="dato-valor" id="cantidad_cajones">---</span>
+                </div>
+                <div class="dato-item">
+                    <span class="dato-titulo">CANT. CAJAS</span>
+                    <span class="dato-valor" id="cantidad_cajas">---</span>
+                </div>
+                <div class="dato-item" style="grid-column: span 2; border-bottom: none;">
+                    <span class="dato-titulo">UNID. ADICIONALES</span>
+                    <span class="dato-valor" id="unidades">---</span>
+                </div>
+            </div>
+
+            <div class="zona-qr-footer">
+                <div id="qrcode"></div>
+                <div class="info-footer">
+                    <div id="codigo_unico"></div>
+                    <div class="empresa">Don Yeyo S.A. - Planta Panificados</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function convertirFormatoFecha(fechaTexto) {
+            if (!fechaTexto || fechaTexto.trim() === '') return fechaTexto;
+            const regexMMDD = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+            const matchMMDD = fechaTexto.match(regexMMDD);
+            if (matchMMDD) {
+                const mes = matchMMDD[1]; const dia = matchMMDD[2]; const anio = matchMMDD[3];
+                if (parseInt(mes) <= 12) return `${dia}/${mes}/${anio}`;
+            }
+            return fechaTexto;
+        }
+
+        const fecha = convertirFormatoFecha(getUrlParameter('fecha'));
+        const producto = getUrlParameter('producto').toUpperCase() || 'PRODUCTO';
+        const codigoProducto = getUrlParameter('codigo_producto');
+        const cantidadUn = getUrlParameter('cantidad_un');
+        const cantidadCajones = getUrlParameter('cantidad_cajones');
+        const cantidadCajas = getUrlParameter('cantidad_cajas');
+        const lote = getUrlParameter('lote').toUpperCase() || 'LOTE';
+        const unidades = getUrlParameter('unidades'); 
+        const fechaVencimiento = convertirFormatoFecha(getUrlParameter('fecha_vencimiento'));
+        const pallet = getUrlParameter('pallet');
+        const uniqueid = getUrlParameter('uniqueid') || '000000';
+
+        document.getElementById('fecha').textContent = fecha;
+        document.getElementById('producto').textContent = producto;
+        document.getElementById('lote').textContent = lote;
+        document.getElementById('fecha_vencimiento').textContent = fechaVencimiento;
+        document.getElementById('cantidad_un').textContent = cantidadUn;
+        document.getElementById('pallet').textContent = pallet;
+        document.getElementById('cantidad_cajones').textContent = cantidadCajones;
+        document.getElementById('cantidad_cajas').textContent = cantidadCajas;
+        document.getElementById('unidades').textContent = unidades;
+        document.getElementById('codigo_unico').textContent = "ID: " + uniqueid;
+
+        const qrData = `ID=${uniqueid}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
+
+        window.onload = function() {
+            // El código QR ahora es casi el doble de grande
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrData,
+                width: 280,
+                height: 280,
+                correctLevel: QRCode.CorrectLevel.L
+            });
+            
+            setTimeout(() => { window.print(); }, 800);
+        };
+
+        window.onafterprint = function () {
+            document.body.innerHTML = `<div style="text-align: center; padding-top: 50px; font-family: sans-serif;">
+                <h1>✅ Etiqueta impresa</h1>
+                <p>Cerrar pestaña para continuar.</p>
+            </div>`;
+        };
+    </script>
+</body>
+</html>
