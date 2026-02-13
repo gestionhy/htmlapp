@@ -1,53 +1,78 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"> <head>
     <meta charset="UTF-8">
-    <title>Etiqueta pan - Don Yeyo</title>
+    <title>Etiqueta Fija Multi-linea - Don Yeyo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @page { size: A4; margin: 0; }
+        @page { 
+            size: A4 landscape; 
+            margin: 0; 
+        }
         * { box-sizing: border-box; }
         
         body { 
             font-family: 'Arial Black', 'Arial', sans-serif; 
             margin: 0; 
             padding: 5mm; 
-            width: 210mm; 
-            height: 296mm; 
+            width: 297mm; 
+            height: 210mm; 
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            background: white;
         }
 
-        /* --- ZONA 1: PRODUCTO (45%) --- */
-        .zona-producto { 
-            height: 45%; 
+        /* --- ZONA 1: PRODUCTO (50% de la altura) --- */
+        .zona-superior {
+            height: 50%; 
+            width: 100%;
+            border-bottom: 5px solid black;
             display: flex;
-            align-items: center; 
-            justify-content: center;
-            border-bottom: 5px solid black;
-            overflow: hidden;
-            padding: 0 10px;
-        }
-        #producto { 
-            font-size: 120pt; 
-            line-height: 0.85; 
-            text-transform: uppercase; 
+            align-items: center;      
+            justify-content: center; 
+            overflow: hidden; 
             text-align: center;
-            word-break: break-all; 
-            max-height: 100%;
-        }
-
-        /* --- ZONA 2: LOTE Y FECHAS (20%) --- */
-        .zona-media { 
-            height: 20%; 
-            display: flex; 
-            border-bottom: 5px solid black;
+            padding: 5px;
         }
         
-        .caja-lote {
-            width: 60%;
+        #producto {
+            /* TAMAÑO FIJO Y GRANDE */
+            font-size: 115pt; 
+            line-height: 0.85; 
+            text-transform: uppercase;
+            font-weight: 900;
+            width: 100%;
+
+            /* --- LA MAGIA DEL CORTE --- */
+            /* 1. Intenta respetar sílabas (HAMBUR-GUESA) */
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+            hyphens: auto; 
+            
+            /* 2. Permite saltar de linea y romper si es necesario */
+            white-space: normal; 
+            word-wrap: break-word; 
+            overflow-wrap: anywhere; 
+        }
+
+        /* --- ZONA 2: DATOS (50% de la altura) --- */
+        .zona-inferior {
+            height: 50%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* COLUMNA 1: LOTE Y FECHAS (35%) */
+        .col-izq {
+            width: 35%;
             border-right: 5px solid black;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .box-lote {
+            height: 45%; 
+            border-bottom: 3px solid black;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,104 +82,90 @@
         .etiqueta-flotante {
             position: absolute; top: 0; left: 0;
             background: black; color: white;
-            font-size: 16pt; padding: 2px 10px;
+            font-family: Arial; font-weight: bold;
+            font-size: 12pt; padding: 2px 8px;
         }
-        #lote { 
-            font-size: 60pt; 
-            line-height: 1; 
-            font-weight: bold;
-        }
+        #lote { font-size: 60pt; font-weight: bold; }
 
-        .caja-fechas {
-            width: 40%;
+        .box-fechas {
+            height: 55%;
             display: flex;
             flex-direction: column;
-        }
-        .fila-fecha {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 3px solid black;
-            text-align: center;
+            justify-content: space-evenly;
             padding: 5px;
         }
-        .fila-fecha:last-child { border-bottom: none; }
-        
-        .titulo-fecha { font-size: 10pt; font-family: Arial, sans-serif; }
-        #vencimiento { font-size: 20pt; font-weight: bold; }
-        #elaboracion { font-size: 14pt; font-weight: bold; line-height: 1.1; }
+        .fila-fecha { text-align: center; }
+        .titulo-fecha { font-size: 14pt; font-family: Arial; display: block; color: #333;}
+        .valor-fecha { font-size: 28pt; font-weight: bold; display: block; line-height: 1.1;}
 
-        /* --- ZONA 3: CANTIDADES Y QR (35%) --- */
-        .zona-inferior { 
-            height: 35%; 
-            display: flex; 
-        }
-        .columna-datos {
-            width: 55%;
+        /* COLUMNA 2: CANTIDADES (25%) - Mas angosta */
+        .col-cen {
+            width: 25%;
             border-right: 5px solid black;
             display: flex;
             flex-direction: column;
         }
         .item-dato {
-            flex: 1;
             border-bottom: 2px solid black;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
+            padding: 0 10px; /* Ajuste padding por ancho reducido */
+            flex-grow: 1; 
         }
         .item-dato:last-child { border-bottom: none; }
         
-        .label-dato { font-size: 18pt; font-family: Arial, sans-serif; }
-        .valor-dato { font-size: 45pt; font-weight: bold; }
+        .label-dato { font-size: 14pt; font-family: Arial; }
+        .valor-dato { font-size: 38pt; font-weight: bold; }
+        
+        /* Resaltado */
+        .item-total { background-color: #eee; border-bottom: 4px solid black !important; }
 
-        /* Estilo especial para Total Unidades si querés resaltarlo más */
-        .item-total { background-color: #f0f0f0; } 
-
-        .columna-qr {
-            width: 45%;
+        /* COLUMNA 3: QR (40%) - Mas ancha para QR gigante */
+        .col-der {
+            width: 40%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 10px;
         }
-        #id-unico { font-size: 12pt; margin-bottom: 5px; font-weight: bold; font-family: Arial;}
+        #id-unico { font-size: 14pt; font-weight: bold; font-family: Arial; margin-bottom: 10px; }
 
     </style>
 </head>
 <body>
 
-    <div class="zona-producto">
-        <div id="producto">PRODUCTO</div>
-    </div>
-
-    <div class="zona-media">
-        <div class="caja-lote">
-            <span class="etiqueta-flotante">LOTE</span>
-            <div id="lote">---</div>
-        </div>
-        <div class="caja-fechas">
-            <div class="fila-fecha">
-                <span class="titulo-fecha">VENCIMIENTO</span>
-                <span class="valor-fecha" id="vencimiento">--/--/--</span>
-            </div>
-            <div class="fila-fecha">
-                <span class="titulo-fecha">ELABORACIÓN</span>
-                <span class="valor-fecha" id="elaboracion">--/--/-- --:--</span>
-            </div>
-        </div>
+    <div class="zona-superior">
+        <div id="producto" lang="es">PRODUCTO</div>
     </div>
 
     <div class="zona-inferior">
-        <div class="columna-datos" id="contenedor-cantidades">
+        
+        <div class="col-izq">
+            <div class="box-lote">
+                <span class="etiqueta-flotante">LOTE</span>
+                <div id="lote">---</div>
             </div>
-        <div class="columna-qr">
+            <div class="box-fechas">
+                <div class="fila-fecha">
+                    <span class="titulo-fecha">VENCIMIENTO</span>
+                    <span class="valor-fecha" id="vencimiento">--/--/--</span>
+                </div>
+                <div class="fila-fecha">
+                    <span class="titulo-fecha">ELABORACIÓN</span>
+                    <span class="valor-fecha" id="elaboracion">--/--/--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-cen" id="contenedor-cantidades"></div>
+
+        <div class="col-der">
             <div id="id-unico">ID: 0000</div>
             <div id="qrcode"></div>
         </div>
+
     </div>
 
     <script>
@@ -163,22 +174,48 @@
             return results ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : '';
         }
 
+        // --- FORMATO FECHA: MM/DD/YYYY -> DD/MM/YYYY ---
+        function formatFechaArg(fechaStr) {
+            if (!fechaStr) return '';
+            let [soloFecha, hora] = fechaStr.split(' ');
+            
+            if (soloFecha.includes('/')) {
+                const partes = soloFecha.split('/');
+                if (partes.length === 3) {
+                    const m = partes[0]; const d = partes[1]; const y = partes[2];
+                    
+                    // Lógica para detectar si viene invertida
+                    if(parseInt(m) > 12) {
+                        // Viene DD/MM/YYYY
+                        soloFecha = `${m}/${d}`; 
+                    } else {
+                        // Viene MM/DD/YYYY -> Lo pasamos a DD/MM/YYYY
+                        soloFecha = `${d}/${m}`; 
+                    }
+                }
+            }
+            
+            if (hora) {
+                return `${soloFecha} ${hora.substring(0, 5)}`;
+            }
+            return soloFecha;
+        }
+
         const d = {
-            prod: getParam('producto') || 'HAMBURGUESA',
+            prod: getParam('producto') || 'HAMBURGUESA', 
             lote: getParam('lote') || '---',
-            venc: getParam('fecha_vencimiento') || '',
-            elab: getParam('fecha') || '', 
+            venc: formatFechaArg(getParam('fecha_vencimiento')), 
+            elab: formatFechaArg(getParam('fecha')),             
             id: getParam('uniqueid') || '',
-            // Cantidades
-            total: getParam('cantidad_un') || '0', // Este es el TOTAL UNIDADES
+            total: getParam('cantidad_un') || '0',
             cajones: getParam('cantidad_cajones'),
-            unidades: getParam('unidades'), // Estas son las sueltas/adicionales
+            unidades: getParam('unidades'),
             pallets: getParam('pallet'),
             cajas: getParam('cantidad_cajas')
         };
 
         // Render Fijos
-        document.getElementById('producto').innerText = d.prod; 
+        document.getElementById('producto').innerText = d.prod;
         document.getElementById('lote').innerText = d.lote;
         document.getElementById('vencimiento').innerText = d.venc;
         document.getElementById('elaboracion').innerText = d.elab;
@@ -186,39 +223,32 @@
 
         // Render Dinámico Cantidades
         const cont = document.getElementById('contenedor-cantidades');
-        
-        // Definimos la lista. 'fijo: true' fuerza a que aparezca.
         const lista = [
-            { l: 'TOTAL UNIDADES', v: d.total, fijo: true }, // ESTE SIEMPRE APARECE
+            { l: 'TOTAL UNIDADES', v: d.total, fijo: true },
             { l: 'CAJONES', v: d.cajones },
             { l: 'CAJAS', v: d.cajas },
-            { l: 'UNID. SUELTAS', v: d.unidades }, 
+            { l: 'UNID. SUELTAS', v: d.unidades },
             { l: 'PALLETS', v: d.pallets }
         ];
 
         lista.forEach(item => {
             const valNum = parseInt(item.v);
-            // Mostramos si es fijo (como Total) O si tiene valor > 0
             if(item.fijo || (item.v && valNum > 0)){
                 const div = document.createElement('div');
                 div.className = 'item-dato';
-                if(item.fijo) div.classList.add('item-total'); // Clase extra por si queres estilizarlo
-                
-                // Si es undefined o null pero es fijo, ponemos 0
+                if(item.fijo) div.classList.add('item-total');
                 const valorMostrar = item.v ? item.v : '0';
-
                 div.innerHTML = `<span class="label-dato">${item.l}</span><span class="valor-dato">${valorMostrar}</span>`;
                 cont.appendChild(div);
             }
         });
 
-        // QR GENERATION
+        // QR
         const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
-        
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
-            width: 250, 
-            height: 250,
+            width: 300,
+            height: 300,
             correctLevel: QRCode.CorrectLevel.L
         });
 
