@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Etiqueta Landscape - Don Yeyo</title>
+    <title>Etiqueta Fija Multi-linea - Don Yeyo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @page { 
@@ -15,35 +15,40 @@
             font-family: 'Arial Black', 'Arial', sans-serif; 
             margin: 0; 
             padding: 5mm; 
-            width: 297mm; /* Ancho A4 Horizontal */
-            height: 210mm; /* Alto A4 Horizontal */
+            width: 297mm; 
+            height: 210mm; 
             overflow: hidden;
             display: flex;
             flex-direction: column;
             background: white;
         }
 
-        /* --- ZONA 1: PRODUCTO (Arriba, todo el ancho) --- */
+        /* --- ZONA 1: PRODUCTO (42% de la altura) --- */
         .zona-superior {
-            height: 40%; /* 40% de la altura para el nombre */
+            height: 42%; 
             width: 100%;
             border-bottom: 5px solid black;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center;     
+            justify-content: center; 
+            overflow: hidden; 
             text-align: center;
-            overflow: hidden;
+            padding: 5px;
         }
+        
         #producto {
-            font-size: 110pt; /* Gigante */
-            line-height: 0.9;
+            /* TAMAÑO FIJO Y GRANDE */
+            font-size: 95pt; 
+            line-height: 0.9; /* Interlineado ajustado para que entren 2 lineas */
             text-transform: uppercase;
-            white-space: nowrap; /* Intenta mantener una linea */
+            /* Permite saltar de linea */
+            white-space: normal; 
+            word-wrap: break-word; 
         }
 
-        /* --- ZONA 2: DATOS (Abajo, dividido en 3 columnas) --- */
+        /* --- ZONA 2: DATOS (58% de la altura) --- */
         .zona-inferior {
-            height: 60%;
+            height: 58%;
             display: flex;
             flex-direction: row;
         }
@@ -55,8 +60,9 @@
             display: flex;
             flex-direction: column;
         }
+        
         .box-lote {
-            flex: 1;
+            height: 45%; /* Un poco menos de altura para dar lugar a fechas */
             border-bottom: 3px solid black;
             display: flex;
             flex-direction: column;
@@ -67,20 +73,21 @@
         .etiqueta-flotante {
             position: absolute; top: 0; left: 0;
             background: black; color: white;
-            font-size: 14pt; padding: 2px 8px;
+            font-family: Arial; font-weight: bold;
+            font-size: 12pt; padding: 2px 8px;
         }
-        #lote { font-size: 55pt; font-weight: bold; }
+        #lote { font-size: 65pt; font-weight: bold; }
 
         .box-fechas {
-            flex: 1;
+            height: 55%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: 10px;
+            justify-content: space-evenly;
+            padding: 5px;
         }
-        .fila-fecha { margin-bottom: 10px; text-align: center; }
-        .titulo-fecha { font-size: 10pt; font-family: Arial; display: block;}
-        .valor-fecha { font-size: 18pt; font-weight: bold; }
+        .fila-fecha { text-align: center; }
+        .titulo-fecha { font-size: 10pt; font-family: Arial; display: block; color: #333;}
+        .valor-fecha { font-size: 18pt; font-weight: bold; display: block; line-height: 1.1;}
 
         /* COLUMNA 2: CANTIDADES (35%) */
         .col-cen {
@@ -90,19 +97,20 @@
             flex-direction: column;
         }
         .item-dato {
-            flex: 1;
             border-bottom: 2px solid black;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 15px;
+            flex-grow: 1; /* Se estira para ocupar espacio */
         }
         .item-dato:last-child { border-bottom: none; }
+        
         .label-dato { font-size: 16pt; font-family: Arial; }
         .valor-dato { font-size: 40pt; font-weight: bold; }
         
-        /* Resaltar Total Unidades */
-        .item-total { background-color: #e0e0e0; border-bottom: 4px solid black !important; }
+        /* Resaltado */
+        .item-total { background-color: #eee; border-bottom: 4px solid black !important; }
 
         /* COLUMNA 3: QR (30%) */
         .col-der {
@@ -113,7 +121,7 @@
             justify-content: center;
             padding: 10px;
         }
-        #id-unico { font-size: 12pt; font-weight: bold; font-family: Arial; margin-bottom: 5px; }
+        #id-unico { font-size: 12pt; font-weight: bold; font-family: Arial; margin-bottom: 10px; }
 
     </style>
 </head>
@@ -142,8 +150,7 @@
             </div>
         </div>
 
-        <div class="col-cen" id="contenedor-cantidades">
-            </div>
+        <div class="col-cen" id="contenedor-cantidades"></div>
 
         <div class="col-der">
             <div id="id-unico">ID: 0000</div>
@@ -158,44 +165,40 @@
             return results ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : '';
         }
 
-        // --- FUNCIÓN PARA CORREGIR FECHAS (MM/DD -> DD/MM) ---
+        // --- FORMATO FECHA: MM/DD/YYYY -> DD/MM/YYYY ---
         function formatFechaArg(fechaStr) {
             if (!fechaStr) return '';
-            
-            // Separar fecha de hora si existe
             let [soloFecha, hora] = fechaStr.split(' ');
             
-            // Asumimos que AppSheet a veces manda MM/DD/YYYY (ej: 03/13/2026)
-            // Si detectamos '/' intentamos parsear
+            // Si viene con barras, intentamos arreglar el orden
             if (soloFecha.includes('/')) {
                 const partes = soloFecha.split('/');
                 if (partes.length === 3) {
-                    // Si el primer numero es > 12, asumimos que YA es DD/MM, si no, asumimos MM/DD 
-                    // (Esta lógica es riesgosa si es 01/02, pero AppSheet suele ser consistente con US format)
-                    // Para ir a lo seguro con tu ejemplo (03/13), invertimos los dos primeros.
-                    // Entrada: MM/DD/YYYY -> Salida: DD/MM/YYYY
-                    const mes = partes[0];
-                    const dia = partes[1];
-                    const anio = partes[2];
+                    // Asumimos entrada MM/DD/YYYY, salimos con DD/MM/YYYY
+                    const m = partes[0]; const d = partes[1]; const y = partes[2];
                     
-                    // Reconstruimos a DD/MM/YYYY
-                    soloFecha = `${dia}/${mes}/${anio}`;
+                    // Pequeña validación: si el primer numero es > 12, ya viene bien (DD/MM)
+                    // Si no, lo damos vuelta.
+                    if(parseInt(m) > 12) {
+                        soloFecha = `${m}/${d}/${y}`; // Ya estaba bien
+                    } else {
+                        soloFecha = `${d}/${m}/${y}`; // Lo invertimos
+                    }
                 }
             }
             
-            // Si había hora, recortarla a HH:MM (sin segundos) y agregarla
+            // Limpiar segundos de la hora
             if (hora) {
-                const horaCorta = hora.substring(0, 5);
-                return `${soloFecha} ${horaCorta}`;
+                return `${soloFecha} ${hora.substring(0, 5)}`;
             }
             return soloFecha;
         }
 
         const d = {
-            prod: getParam('producto') || 'HAMBURGUESA',
+            prod: getParam('producto') || 'HAMBURGUESA DOBLE', // Ejemplo largo
             lote: getParam('lote') || '---',
-            venc: formatFechaArg(getParam('fecha_vencimiento')), // Aplicamos formato
-            elab: formatFechaArg(getParam('fecha')),             // Aplicamos formato con hora
+            venc: formatFechaArg(getParam('fecha_vencimiento')), 
+            elab: formatFechaArg(getParam('fecha')),             
             id: getParam('uniqueid') || '',
             total: getParam('cantidad_un') || '0',
             cajones: getParam('cantidad_cajones'),
@@ -237,8 +240,8 @@
         const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
-            width: 260,
-            height: 260,
+            width: 250,
+            height: 250,
             correctLevel: QRCode.CorrectLevel.L
         });
 
