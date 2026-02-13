@@ -240,8 +240,8 @@
         const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
-            width: 250,
-            height: 250,
+            width: 300,
+            height: 300,
             correctLevel: QRCode.CorrectLevel.L
         });
 
