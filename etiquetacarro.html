@@ -244,7 +244,7 @@
         });
 
         // QR
-        const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
+        const qrString = `ID=${uniqueid}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
             width: 300,
