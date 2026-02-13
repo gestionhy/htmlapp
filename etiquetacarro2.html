@@ -2,52 +2,62 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Etiqueta Pallets - Don Yeyo</title>
+    <title>Etiqueta Landscape - Don Yeyo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @page { size: A4; margin: 0; }
+        @page { 
+            size: A4 landscape; 
+            margin: 0; 
+        }
         * { box-sizing: border-box; }
         
         body { 
             font-family: 'Arial Black', 'Arial', sans-serif; 
             margin: 0; 
             padding: 5mm; 
-            width: 210mm; 
-            height: 296mm; 
+            width: 297mm; /* Ancho A4 Horizontal */
+            height: 210mm; /* Alto A4 Horizontal */
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            background: white;
         }
 
-        /* --- ZONA 1: PRODUCTO (45%) --- */
-        .zona-producto { 
-            height: 45%; 
+        /* --- ZONA 1: PRODUCTO (Arriba, todo el ancho) --- */
+        .zona-superior {
+            height: 40%; /* 40% de la altura para el nombre */
+            width: 100%;
+            border-bottom: 5px solid black;
             display: flex;
-            align-items: center; 
+            align-items: center;
             justify-content: center;
-            border-bottom: 5px solid black;
-            overflow: hidden;
-            padding: 0 10px;
-        }
-        #producto { 
-            font-size: 130pt; 
-            line-height: 0.85; 
-            text-transform: uppercase; 
             text-align: center;
-            word-break: break-all; 
-            max-height: 100%;
+            overflow: hidden;
+        }
+        #producto {
+            font-size: 110pt; /* Gigante */
+            line-height: 0.9;
+            text-transform: uppercase;
+            white-space: nowrap; /* Intenta mantener una linea */
         }
 
-        /* --- ZONA 2: LOTE Y FECHAS (20%) --- */
-        .zona-media { 
-            height: 20%; 
-            display: flex; 
-            border-bottom: 5px solid black;
+        /* --- ZONA 2: DATOS (Abajo, dividido en 3 columnas) --- */
+        .zona-inferior {
+            height: 60%;
+            display: flex;
+            flex-direction: row;
         }
-        
-        .caja-lote {
-            width: 60%;
+
+        /* COLUMNA 1: LOTE Y FECHAS (35%) */
+        .col-izq {
+            width: 35%;
             border-right: 5px solid black;
+            display: flex;
+            flex-direction: column;
+        }
+        .box-lote {
+            flex: 1;
+            border-bottom: 3px solid black;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,42 +67,24 @@
         .etiqueta-flotante {
             position: absolute; top: 0; left: 0;
             background: black; color: white;
-            font-size: 16pt; padding: 2px 10px;
+            font-size: 14pt; padding: 2px 8px;
         }
-        #lote { 
-            font-size: 60pt; 
-            line-height: 1; 
-            font-weight: bold;
-        }
+        #lote { font-size: 55pt; font-weight: bold; }
 
-        .caja-fechas {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-        }
-        .fila-fecha {
+        .box-fechas {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            border-bottom: 3px solid black;
-            text-align: center;
-            padding: 5px;
+            padding: 10px;
         }
-        .fila-fecha:last-child { border-bottom: none; }
-        
-        .titulo-fecha { font-size: 10pt; font-family: Arial, sans-serif; }
-        #vencimiento { font-size: 20pt; font-weight: bold; }
-        #elaboracion { font-size: 14pt; font-weight: bold; line-height: 1.1; }
+        .fila-fecha { margin-bottom: 10px; text-align: center; }
+        .titulo-fecha { font-size: 10pt; font-family: Arial; display: block;}
+        .valor-fecha { font-size: 18pt; font-weight: bold; }
 
-        /* --- ZONA 3: CANTIDADES Y QR (35%) --- */
-        .zona-inferior { 
-            height: 35%; 
-            display: flex; 
-        }
-        .columna-datos {
-            width: 55%;
+        /* COLUMNA 2: CANTIDADES (35%) */
+        .col-cen {
+            width: 35%;
             border-right: 5px solid black;
             display: flex;
             flex-direction: column;
@@ -106,55 +98,58 @@
             padding: 0 15px;
         }
         .item-dato:last-child { border-bottom: none; }
+        .label-dato { font-size: 16pt; font-family: Arial; }
+        .valor-dato { font-size: 40pt; font-weight: bold; }
         
-        .label-dato { font-size: 18pt; font-family: Arial, sans-serif; }
-        .valor-dato { font-size: 45pt; font-weight: bold; }
+        /* Resaltar Total Unidades */
+        .item-total { background-color: #e0e0e0; border-bottom: 4px solid black !important; }
 
-        /* Estilo especial para Total Unidades si querés resaltarlo más */
-        .item-total { background-color: #f0f0f0; } 
-
-        .columna-qr {
-            width: 45%;
+        /* COLUMNA 3: QR (30%) */
+        .col-der {
+            width: 30%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 10px;
         }
-        #id-unico { font-size: 12pt; margin-bottom: 5px; font-weight: bold; font-family: Arial;}
+        #id-unico { font-size: 12pt; font-weight: bold; font-family: Arial; margin-bottom: 5px; }
 
     </style>
 </head>
 <body>
 
-    <div class="zona-producto">
+    <div class="zona-superior">
         <div id="producto">PRODUCTO</div>
     </div>
 
-    <div class="zona-media">
-        <div class="caja-lote">
-            <span class="etiqueta-flotante">LOTE</span>
-            <div id="lote">---</div>
-        </div>
-        <div class="caja-fechas">
-            <div class="fila-fecha">
-                <span class="titulo-fecha">VENCIMIENTO</span>
-                <span class="valor-fecha" id="vencimiento">--/--/--</span>
-            </div>
-            <div class="fila-fecha">
-                <span class="titulo-fecha">ELABORACIÓN</span>
-                <span class="valor-fecha" id="elaboracion">--/--/-- --:--</span>
-            </div>
-        </div>
-    </div>
-
     <div class="zona-inferior">
-        <div class="columna-datos" id="contenedor-cantidades">
+        
+        <div class="col-izq">
+            <div class="box-lote">
+                <span class="etiqueta-flotante">LOTE</span>
+                <div id="lote">---</div>
             </div>
-        <div class="columna-qr">
+            <div class="box-fechas">
+                <div class="fila-fecha">
+                    <span class="titulo-fecha">VENCIMIENTO</span>
+                    <span class="valor-fecha" id="vencimiento">--/--/--</span>
+                </div>
+                <div class="fila-fecha">
+                    <span class="titulo-fecha">ELABORACIÓN</span>
+                    <span class="valor-fecha" id="elaboracion">--/--/--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-cen" id="contenedor-cantidades">
+            </div>
+
+        <div class="col-der">
             <div id="id-unico">ID: 0000</div>
             <div id="qrcode"></div>
         </div>
+
     </div>
 
     <script>
@@ -163,22 +158,54 @@
             return results ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : '';
         }
 
+        // --- FUNCIÓN PARA CORREGIR FECHAS (MM/DD -> DD/MM) ---
+        function formatFechaArg(fechaStr) {
+            if (!fechaStr) return '';
+            
+            // Separar fecha de hora si existe
+            let [soloFecha, hora] = fechaStr.split(' ');
+            
+            // Asumimos que AppSheet a veces manda MM/DD/YYYY (ej: 03/13/2026)
+            // Si detectamos '/' intentamos parsear
+            if (soloFecha.includes('/')) {
+                const partes = soloFecha.split('/');
+                if (partes.length === 3) {
+                    // Si el primer numero es > 12, asumimos que YA es DD/MM, si no, asumimos MM/DD 
+                    // (Esta lógica es riesgosa si es 01/02, pero AppSheet suele ser consistente con US format)
+                    // Para ir a lo seguro con tu ejemplo (03/13), invertimos los dos primeros.
+                    // Entrada: MM/DD/YYYY -> Salida: DD/MM/YYYY
+                    const mes = partes[0];
+                    const dia = partes[1];
+                    const anio = partes[2];
+                    
+                    // Reconstruimos a DD/MM/YYYY
+                    soloFecha = `${dia}/${mes}/${anio}`;
+                }
+            }
+            
+            // Si había hora, recortarla a HH:MM (sin segundos) y agregarla
+            if (hora) {
+                const horaCorta = hora.substring(0, 5);
+                return `${soloFecha} ${horaCorta}`;
+            }
+            return soloFecha;
+        }
+
         const d = {
             prod: getParam('producto') || 'HAMBURGUESA',
             lote: getParam('lote') || '---',
-            venc: getParam('fecha_vencimiento') || '',
-            elab: getParam('fecha') || '', 
+            venc: formatFechaArg(getParam('fecha_vencimiento')), // Aplicamos formato
+            elab: formatFechaArg(getParam('fecha')),             // Aplicamos formato con hora
             id: getParam('uniqueid') || '',
-            // Cantidades
-            total: getParam('cantidad_un') || '0', // Este es el TOTAL UNIDADES
+            total: getParam('cantidad_un') || '0',
             cajones: getParam('cantidad_cajones'),
-            unidades: getParam('unidades'), // Estas son las sueltas/adicionales
+            unidades: getParam('unidades'),
             pallets: getParam('pallet'),
             cajas: getParam('cantidad_cajas')
         };
 
         // Render Fijos
-        document.getElementById('producto').innerText = d.prod; 
+        document.getElementById('producto').innerText = d.prod;
         document.getElementById('lote').innerText = d.lote;
         document.getElementById('vencimiento').innerText = d.venc;
         document.getElementById('elaboracion').innerText = d.elab;
@@ -186,39 +213,32 @@
 
         // Render Dinámico Cantidades
         const cont = document.getElementById('contenedor-cantidades');
-        
-        // Definimos la lista. 'fijo: true' fuerza a que aparezca.
         const lista = [
-            { l: 'TOTAL UNIDADES', v: d.total, fijo: true }, // ESTE SIEMPRE APARECE
+            { l: 'TOTAL UNIDADES', v: d.total, fijo: true },
             { l: 'CAJONES', v: d.cajones },
             { l: 'CAJAS', v: d.cajas },
-            { l: 'UNID. SUELTAS', v: d.unidades }, 
+            { l: 'UNID. SUELTAS', v: d.unidades },
             { l: 'PALLETS', v: d.pallets }
         ];
 
         lista.forEach(item => {
             const valNum = parseInt(item.v);
-            // Mostramos si es fijo (como Total) O si tiene valor > 0
             if(item.fijo || (item.v && valNum > 0)){
                 const div = document.createElement('div');
                 div.className = 'item-dato';
-                if(item.fijo) div.classList.add('item-total'); // Clase extra por si queres estilizarlo
-                
-                // Si es undefined o null pero es fijo, ponemos 0
+                if(item.fijo) div.classList.add('item-total');
                 const valorMostrar = item.v ? item.v : '0';
-
                 div.innerHTML = `<span class="label-dato">${item.l}</span><span class="valor-dato">${valorMostrar}</span>`;
                 cont.appendChild(div);
             }
         });
 
-        // QR GENERATION
+        // QR
         const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
-        
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
-            width: 250, 
-            height: 250,
+            width: 260,
+            height: 260,
             correctLevel: QRCode.CorrectLevel.L
         });
 
