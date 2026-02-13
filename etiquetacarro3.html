@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Etiqueta Pallets - Don Yeyo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Arial Black', 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 5mm; 
+            width: 210mm; 
+            height: 296mm; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ZONA 1: PRODUCTO (45%) --- */
+        .zona-producto { 
+            height: 45%; 
+            display: flex;
+            align-items: center; 
+            justify-content: center;
+            border-bottom: 5px solid black;
+            overflow: hidden;
+            padding: 0 10px;
+        }
+        #producto { 
+            font-size: 130pt; 
+            line-height: 0.85; 
+            text-transform: uppercase; 
+            text-align: center;
+            word-break: break-all; /* Corta la palabra si es larga */
+            max-height: 100%;
+        }
+
+        /* --- ZONA 2: LOTE Y FECHAS (20%) --- */
+        .zona-media { 
+            height: 20%; 
+            display: flex; 
+            border-bottom: 5px solid black;
+        }
+        
+        /* LOTE: 60% del ancho */
+        .caja-lote {
+            width: 60%;
+            border-right: 5px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .etiqueta-flotante {
+            position: absolute; top: 0; left: 0;
+            background: black; color: white;
+            font-size: 16pt; padding: 2px 10px;
+        }
+        #lote { 
+            font-size: 60pt; /* AJUSTADO: Más chico para 7 dígitos */
+            line-height: 1; 
+            font-weight: bold;
+        }
+
+        /* FECHAS: 40% del ancho */
+        .caja-fechas {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+        }
+        .fila-fecha {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 3px solid black;
+            text-align: center;
+            padding: 5px;
+        }
+        .fila-fecha:last-child { border-bottom: none; }
+        
+        .titulo-fecha { font-size: 10pt; font-family: Arial, sans-serif; }
+        
+        /* Estilos diferenciados para Vencimiento y Elaboración */
+        #vencimiento { font-size: 20pt; font-weight: bold; }
+        
+        #elaboracion { 
+            font-size: 14pt; /* AJUSTADO: Más chico para que entre fecha+hora */
+            font-weight: bold; 
+            line-height: 1.1; /* Un poco de aire si se divide en dos lineas */
+        }
+
+        /* --- ZONA 3: CANTIDADES Y QR (35%) --- */
+        .zona-inferior { 
+            height: 35%; 
+            display: flex; 
+        }
+        .columna-datos {
+            width: 55%;
+            border-right: 5px solid black;
+            display: flex;
+            flex-direction: column;
+        }
+        .item-dato {
+            flex: 1;
+            border-bottom: 2px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+        }
+        .item-dato:last-child { border-bottom: none; }
+        .label-dato { font-size: 18pt; font-family: Arial, sans-serif; }
+        .valor-dato { font-size: 45pt; font-weight: bold; }
+
+        .columna-qr {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        #id-unico { font-size: 12pt; margin-bottom: 5px; font-weight: bold; font-family: Arial;}
+
+    </style>
+</head>
+<body>
+
+    <div class="zona-producto">
+        <div id="producto">PRODUCTO</div>
+    </div>
+
+    <div class="zona-media">
+        <div class="caja-lote">
+            <span class="etiqueta-flotante">LOTE</span>
+            <div id="lote">---</div>
+        </div>
+        <div class="caja-fechas">
+            <div class="fila-fecha">
+                <span class="titulo-fecha">VENCIMIENTO</span>
+                <span class="valor-fecha" id="vencimiento">--/--/--</span>
+            </div>
+            <div class="fila-fecha">
+                <span class="titulo-fecha">ELABORACIÓN</span>
+                <span class="valor-fecha" id="elaboracion">--/--/-- --:--</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="zona-inferior">
+        <div class="columna-datos" id="contenedor-cantidades">
+            </div>
+        <div class="columna-qr">
+            <div id="id-unico">ID: 0000</div>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
+    <script>
+        function getParam(name) {
+            const results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            return results ? decodeURIComponent(results[1].replace(/\+/g, ' ')) : '';
+        }
+
+        const d = {
+            prod: getParam('producto') || 'HAMBURGUESA',
+            lote: getParam('lote') || '2026042',
+            venc: getParam('fecha_vencimiento') || '',
+            elab: getParam('fecha') || '', // Ahora pasamos todo (Fecha + Hora)
+            id: getParam('uniqueid') || '',
+            cajones: getParam('cantidad_cajones'),
+            unidades: getParam('unidades'),
+            pallets: getParam('pallet'),
+            cajas: getParam('cantidad_cajas')
+        };
+
+        // Render Fijos
+        document.getElementById('producto').innerText = d.prod; 
+        document.getElementById('lote').innerText = d.lote;
+        document.getElementById('vencimiento').innerText = d.venc;
+        document.getElementById('elaboracion').innerText = d.elab; // Muestra completa
+        document.getElementById('id-unico').innerText = "ID: " + d.id;
+
+        // Render Dinámico Cantidades
+        const cont = document.getElementById('contenedor-cantidades');
+        const lista = [
+            { l: 'PALLETS', v: d.pallets },
+            { l: 'CAJONES', v: d.cajones },
+            { l: 'CAJAS', v: d.cajas },
+            { l: 'UNID. ADIC.', v: d.unidades }
+        ];
+
+        let hayDatos = false;
+        lista.forEach(item => {
+            if(item.v && parseInt(item.v) > 0){
+                hayDatos = true;
+                const div = document.createElement('div');
+                div.className = 'item-dato';
+                div.innerHTML = `<span class="label-dato">${item.l}</span><span class="valor-dato">${item.v}</span>`;
+                cont.appendChild(div);
+            }
+        });
+
+        if(!hayDatos) {
+            cont.innerHTML = `<div class="item-dato" style="justify-content:center"><span class="label-dato">SIN CANTIDADES</span></div>`;
+        }
+
+        // QR GENERATION
+        // Concatenamos todo para el QR
+        const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|V:${d.venc}|E:${d.elab}`;
+        
+        new QRCode(document.getElementById("qrcode"), {
+            text: qrString,
+            width: 250, // Un pelín mas chico para asegurar margen
+            height: 250,
+            correctLevel: QRCode.CorrectLevel.L
+        });
+
+        window.onload = () => { setTimeout(() => { window.print(); }, 800); };
+    </script>
+</body>
+</html>
