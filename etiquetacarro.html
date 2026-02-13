@@ -34,7 +34,7 @@
             line-height: 0.85; 
             text-transform: uppercase; 
             text-align: center;
-            word-break: break-all; /* Corta la palabra si es larga */
+            word-break: break-all; 
             max-height: 100%;
         }
 
@@ -45,7 +45,6 @@
             border-bottom: 5px solid black;
         }
         
-        /* LOTE: 60% del ancho */
         .caja-lote {
             width: 60%;
             border-right: 5px solid black;
@@ -61,12 +60,11 @@
             font-size: 16pt; padding: 2px 10px;
         }
         #lote { 
-            font-size: 60pt; /* AJUSTADO: Más chico para 7 dígitos */
+            font-size: 60pt; 
             line-height: 1; 
             font-weight: bold;
         }
 
-        /* FECHAS: 40% del ancho */
         .caja-fechas {
             width: 40%;
             display: flex;
@@ -85,15 +83,8 @@
         .fila-fecha:last-child { border-bottom: none; }
         
         .titulo-fecha { font-size: 10pt; font-family: Arial, sans-serif; }
-        
-        /* Estilos diferenciados para Vencimiento y Elaboración */
         #vencimiento { font-size: 20pt; font-weight: bold; }
-        
-        #elaboracion { 
-            font-size: 14pt; /* AJUSTADO: Más chico para que entre fecha+hora */
-            font-weight: bold; 
-            line-height: 1.1; /* Un poco de aire si se divide en dos lineas */
-        }
+        #elaboracion { font-size: 14pt; font-weight: bold; line-height: 1.1; }
 
         /* --- ZONA 3: CANTIDADES Y QR (35%) --- */
         .zona-inferior { 
@@ -115,8 +106,12 @@
             padding: 0 15px;
         }
         .item-dato:last-child { border-bottom: none; }
+        
         .label-dato { font-size: 18pt; font-family: Arial, sans-serif; }
         .valor-dato { font-size: 45pt; font-weight: bold; }
+
+        /* Estilo especial para Total Unidades si querés resaltarlo más */
+        .item-total { background-color: #f0f0f0; } 
 
         .columna-qr {
             width: 45%;
@@ -170,12 +165,14 @@
 
         const d = {
             prod: getParam('producto') || 'HAMBURGUESA',
-            lote: getParam('lote') || '2026042',
+            lote: getParam('lote') || '---',
             venc: getParam('fecha_vencimiento') || '',
-            elab: getParam('fecha') || '', // Ahora pasamos todo (Fecha + Hora)
+            elab: getParam('fecha') || '', 
             id: getParam('uniqueid') || '',
+            // Cantidades
+            total: getParam('cantidad_un') || '0', // Este es el TOTAL UNIDADES
             cajones: getParam('cantidad_cajones'),
-            unidades: getParam('unidades'),
+            unidades: getParam('unidades'), // Estas son las sueltas/adicionales
             pallets: getParam('pallet'),
             cajas: getParam('cantidad_cajas')
         };
@@ -184,40 +181,43 @@
         document.getElementById('producto').innerText = d.prod; 
         document.getElementById('lote').innerText = d.lote;
         document.getElementById('vencimiento').innerText = d.venc;
-        document.getElementById('elaboracion').innerText = d.elab; // Muestra completa
+        document.getElementById('elaboracion').innerText = d.elab;
         document.getElementById('id-unico').innerText = "ID: " + d.id;
 
         // Render Dinámico Cantidades
         const cont = document.getElementById('contenedor-cantidades');
+        
+        // Definimos la lista. 'fijo: true' fuerza a que aparezca.
         const lista = [
-            { l: 'PALLETS', v: d.pallets },
+            { l: 'TOTAL UNIDADES', v: d.total, fijo: true }, // ESTE SIEMPRE APARECE
             { l: 'CAJONES', v: d.cajones },
             { l: 'CAJAS', v: d.cajas },
-            { l: 'UNID. ADIC.', v: d.unidades }
+            { l: 'UNID. SUELTAS', v: d.unidades }, 
+            { l: 'PALLETS', v: d.pallets }
         ];
 
-        let hayDatos = false;
         lista.forEach(item => {
-            if(item.v && parseInt(item.v) > 0){
-                hayDatos = true;
+            const valNum = parseInt(item.v);
+            // Mostramos si es fijo (como Total) O si tiene valor > 0
+            if(item.fijo || (item.v && valNum > 0)){
                 const div = document.createElement('div');
                 div.className = 'item-dato';
-                div.innerHTML = `<span class="label-dato">${item.l}</span><span class="valor-dato">${item.v}</span>`;
+                if(item.fijo) div.classList.add('item-total'); // Clase extra por si queres estilizarlo
+                
+                // Si es undefined o null pero es fijo, ponemos 0
+                const valorMostrar = item.v ? item.v : '0';
+
+                div.innerHTML = `<span class="label-dato">${item.l}</span><span class="valor-dato">${valorMostrar}</span>`;
                 cont.appendChild(div);
             }
         });
 
-        if(!hayDatos) {
-            cont.innerHTML = `<div class="item-dato" style="justify-content:center"><span class="label-dato">SIN CANTIDADES</span></div>`;
-        }
-
         // QR GENERATION
-        // Concatenamos todo para el QR
-        const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|V:${d.venc}|E:${d.elab}`;
+        const qrString = `ID:${d.id}|P:${d.prod}|L:${d.lote}|TOT:${d.total}`;
         
         new QRCode(document.getElementById("qrcode"), {
             text: qrString,
-            width: 250, // Un pelín mas chico para asegurar margen
+            width: 250, 
             height: 250,
             correctLevel: QRCode.CorrectLevel.L
         });
