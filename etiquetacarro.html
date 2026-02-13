@@ -243,15 +243,21 @@
             }
         });
 
-        // QR
-        const qrString = `ID=${uniqueid}|F=${fecha}|P=${producto}|C=${codigoProducto}|U=${cantidadUn}|J=${cantidadCajones}|X=${cantidadCajas}|L=${lote}|V=${fechaVencimiento}|T=${pallet}|A=${unidades}`;
-        new QRCode(document.getElementById("qrcode"), {
-            text: qrString,
-            width: 300,
-            height: 300,
-            correctLevel: QRCode.CorrectLevel.L
-        });
+       
 
+// Definimos primero las variables faltantes que el QR pide pero el objeto 'd' no tenía mapeadas directamente con ese nombre
+const codigoProducto = getParam('codigo_producto') || ''; 
+
+// Construimos la cadena usando el objeto 'd'
+const qrString = `ID=${d.id}|F=${d.elab}|P=${d.prod}|C=${codigoProducto}|U=${d.total}|J=${d.cajones}|X=${d.cajas}|L=${d.lote}|V=${d.venc}|T=${d.pallets}|A=${d.unidades}`;
+
+// Generamos el QR
+new QRCode(document.getElementById("qrcode"), {
+    text: qrString,
+    width: 300,
+    height: 300,
+    correctLevel: QRCode.CorrectLevel.L
+});
         window.onafterprint = function() {
             // Borra todo el contenido de la etiqueta y muestra el mensaje de despedida
             document.body.innerHTML = `
