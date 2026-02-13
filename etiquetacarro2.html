@@ -86,8 +86,8 @@
             padding: 5px;
         }
         .fila-fecha { text-align: center; }
-        .titulo-fecha { font-size: 10pt; font-family: Arial; display: block; color: #333;}
-        .valor-fecha { font-size: 18pt; font-weight: bold; display: block; line-height: 1.1;}
+        .titulo-fecha { font-size: 20pt; font-family: Arial; display: block; color: #333;}
+        .valor-fecha { font-size: 48pt; font-weight: bold; display: block; line-height: 1.1;}
 
         /* COLUMNA 2: CANTIDADES (35%) */
         .col-cen {
@@ -180,9 +180,9 @@
                     // Pequeña validación: si el primer numero es > 12, ya viene bien (DD/MM)
                     // Si no, lo damos vuelta.
                     if(parseInt(m) > 12) {
-                        soloFecha = `${m}/${d}/${y}`; // Ya estaba bien
+                        soloFecha = `${m}/${d}`; // Ya estaba bien
                     } else {
-                        soloFecha = `${d}/${m}/${y}`; // Lo invertimos
+                        soloFecha = `${d}/${m}`; // Lo invertimos
                     }
                 }
             }
