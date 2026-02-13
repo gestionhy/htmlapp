@@ -252,6 +252,24 @@
             correctLevel: QRCode.CorrectLevel.L
         });
 
+        window.onafterprint = function() {
+            // Borra todo el contenido de la etiqueta y muestra el mensaje de despedida
+            document.body.innerHTML = `
+                <div style="
+                    display: flex; 
+                    flex-direction: column; 
+                    justify-content: center; 
+                    align-items: center; 
+                    height: 100vh; 
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                ">
+                    <h1 style="font-size: 40pt; margin-bottom: 10px;">✅ Listo</h1>
+                    <p style="font-size: 20pt;">Ya podés cerrar esta pestaña.</p>
+                </div>
+            `;
+        };
+
         window.onload = () => { setTimeout(() => { window.print(); }, 800); };
     </script>
 </body>
