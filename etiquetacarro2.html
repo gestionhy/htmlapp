@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"> <head>
     <meta charset="UTF-8">
     <title>Etiqueta Fija Multi-linea - Don Yeyo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -23,13 +22,13 @@
             background: white;
         }
 
-        /* --- ZONA 1: PRODUCTO (42% de la altura) --- */
+        /* --- ZONA 1: PRODUCTO (50% de la altura) --- */
         .zona-superior {
             height: 50%; 
             width: 100%;
             border-bottom: 5px solid black;
             display: flex;
-            align-items: center;     
+            align-items: center;      
             justify-content: center; 
             overflow: hidden; 
             text-align: center;
@@ -39,14 +38,24 @@
         #producto {
             /* TAMAÑO FIJO Y GRANDE */
             font-size: 105pt; 
-            line-height: 0.9; /* Interlineado ajustado para que entren 2 lineas */
+            line-height: 0.85; 
             text-transform: uppercase;
-            /* Permite saltar de linea */
+            font-weight: 900;
+            width: 100%;
+
+            /* --- LA MAGIA DEL CORTE --- */
+            /* 1. Intenta respetar sílabas (HAMBUR-GUESA) */
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+            hyphens: auto; 
+            
+            /* 2. Permite saltar de linea y romper si es necesario */
             white-space: normal; 
             word-wrap: break-word; 
+            overflow-wrap: anywhere; 
         }
 
-        /* --- ZONA 2: DATOS (58% de la altura) --- */
+        /* --- ZONA 2: DATOS (50% de la altura) --- */
         .zona-inferior {
             height: 50%;
             display: flex;
@@ -62,7 +71,7 @@
         }
         
         .box-lote {
-            height: 45%; /* Un poco menos de altura para dar lugar a fechas */
+            height: 45%; 
             border-bottom: 3px solid black;
             display: flex;
             flex-direction: column;
@@ -86,10 +95,10 @@
             padding: 5px;
         }
         .fila-fecha { text-align: center; }
-        .titulo-fecha { font-size: 15pt; font-family: Arial; display: block; color: #333;}
-        .valor-fecha { font-size: 36pt; font-weight: bold; display: block; line-height: 1.1;}
+        .titulo-fecha { font-size: 14pt; font-family: Arial; display: block; color: #333;}
+        .valor-fecha { font-size: 28pt; font-weight: bold; display: block; line-height: 1.1;}
 
-        /* COLUMNA 2: CANTIDADES (35%) */
+        /* COLUMNA 2: CANTIDADES (25%) - Mas angosta */
         .col-cen {
             width: 25%;
             border-right: 5px solid black;
@@ -101,18 +110,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
-            flex-grow: 1; /* Se estira para ocupar espacio */
+            padding: 0 10px; /* Ajuste padding por ancho reducido */
+            flex-grow: 1; 
         }
         .item-dato:last-child { border-bottom: none; }
         
-        .label-dato { font-size: 16pt; font-family: Arial; }
-        .valor-dato { font-size: 40pt; font-weight: bold; }
+        .label-dato { font-size: 14pt; font-family: Arial; }
+        .valor-dato { font-size: 38pt; font-weight: bold; }
         
         /* Resaltado */
         .item-total { background-color: #eee; border-bottom: 4px solid black !important; }
 
-        /* COLUMNA 3: QR (30%) */
+        /* COLUMNA 3: QR (40%) - Mas ancha para QR gigante */
         .col-der {
             width: 40%;
             display: flex;
@@ -121,14 +130,14 @@
             justify-content: center;
             padding: 10px;
         }
-        #id-unico { font-size: 12pt; font-weight: bold; font-family: Arial; margin-bottom: 10px; }
+        #id-unico { font-size: 14pt; font-weight: bold; font-family: Arial; margin-bottom: 10px; }
 
     </style>
 </head>
 <body>
 
     <div class="zona-superior">
-        <div id="producto">PRODUCTO</div>
+        <div id="producto" lang="es">PRODUCTO</div>
     </div>
 
     <div class="zona-inferior">
@@ -170,24 +179,22 @@
             if (!fechaStr) return '';
             let [soloFecha, hora] = fechaStr.split(' ');
             
-            // Si viene con barras, intentamos arreglar el orden
             if (soloFecha.includes('/')) {
                 const partes = soloFecha.split('/');
                 if (partes.length === 3) {
-                    // Asumimos entrada MM/DD/YYYY, salimos con DD/MM/YYYY
                     const m = partes[0]; const d = partes[1]; const y = partes[2];
                     
-                    // Pequeña validación: si el primer numero es > 12, ya viene bien (DD/MM)
-                    // Si no, lo damos vuelta.
+                    // Lógica para detectar si viene invertida
                     if(parseInt(m) > 12) {
-                        soloFecha = `${m}/${d}`; // Ya estaba bien
+                        // Viene DD/MM/YYYY
+                        soloFecha = `${m}/${d}/${y}`; 
                     } else {
-                        soloFecha = `${d}/${m}`; // Lo invertimos
+                        // Viene MM/DD/YYYY -> Lo pasamos a DD/MM/YYYY
+                        soloFecha = `${d}/${m}/${y}`; 
                     }
                 }
             }
             
-            // Limpiar segundos de la hora
             if (hora) {
                 return `${soloFecha} ${hora.substring(0, 5)}`;
             }
@@ -195,7 +202,7 @@
         }
 
         const d = {
-            prod: getParam('producto') || 'HAMBURGUESA DOBLE', // Ejemplo largo
+            prod: getParam('producto') || 'HAMBURGUESA', 
             lote: getParam('lote') || '---',
             venc: formatFechaArg(getParam('fecha_vencimiento')), 
             elab: formatFechaArg(getParam('fecha')),             
