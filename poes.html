@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de POES - Don Yeyo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+        :root {
+            --azul-don-yeyo: #003a6c;
+            --gris-texto: #333333;
+            --borde-suave: #b8c4d1;
+            --borde-fuerte: #8ba3ba;
+            --gris-fondo: #f4f7f9;
+        }
+
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            margin: 0; 
+            color: var(--gris-texto); 
+        }
+        
+        /* Interfaz de entrada */
+        #input-section { 
+            background: #eee; 
+            padding: 30px; 
+            text-align: center;
+            border-bottom: 3px solid var(--azul-don-yeyo);
+        }
+        #excel_data { 
+            width: 90%; 
+            max-width: 900px;
+            height: 150px; 
+            margin-top: 15px; 
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        button { 
+            background: var(--azul-don-yeyo); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            font-weight: 700; 
+            margin-top: 15px; 
+            text-transform: uppercase;
+        }
+        button:hover { background: #00264d; }
+
+        /* Reporte Final */
+        #reporte-final { display: none; margin: 1.5cm; }
+
+        /* TABLAS INDIVIDUALES POR FRECUENCIA */
+        table.tabla-poes { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed; 
+            margin-bottom: 40px; /* Espacio elegante entre frecuencias */
+        }
+        
+        .header-cell-wrapper {
+            border: none !important;
+            background-color: white !important;
+            padding: 0 0 10px 0 !important;
+        }
+
+        table.layout-header {
+            width: 100%;
+            border-collapse: collapse;
+            border-bottom: 2px solid var(--azul-don-yeyo);
+            margin-bottom: 10px;
+        }
+        table.layout-header td {
+            border: none !important;
+            background-color: transparent !important;
+            padding: 0 0 8px 0 !important;
+            vertical-align: middle;
+        }
+
+        .header-titles h1 { 
+            margin: 0; 
+            font-size: 18px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            color: var(--azul-don-yeyo);
+        }
+        .header-titles p { 
+            margin: 2px 0 0 0; 
+            font-size: 9pt; 
+            color: var(--azul-don-yeyo);
+        }
+        
+        .sector-titulo {
+            color: var(--azul-don-yeyo);
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-weight: 700;
+            border-left: 5px solid var(--azul-don-yeyo);
+            padding-left: 8px;
+            text-align: left;
+        }
+
+        th { 
+            background-color: var(--azul-don-yeyo) !important; 
+            color: white !important; 
+            padding: 10px 12px; 
+            border: 2px solid var(--azul-don-yeyo); 
+            font-size: 10pt;
+            text-align: left;
+            letter-spacing: 0.5px;
+        }
+        table.tabla-poes > tbody > tr > td { 
+            padding: 10px 12px; 
+            border-left: 1px solid var(--borde-suave); 
+            border-right: 1px solid var(--borde-suave); 
+            border-bottom: 1px solid var(--borde-fuerte); 
+            font-size: 9pt; 
+            vertical-align: top; 
+            word-wrap: break-word;
+            white-space: pre-line; 
+            line-height: 1.4;
+        }
+        
+        table.tabla-poes > tbody > tr:nth-child(even) > td { 
+            background-color: var(--gris-fondo); 
+        }
+
+        /* PIE DE PÁGINA (Oculto en pantalla normal) */
+        #footer-fijo { display: none; }
+
+        /* MAGIA PARA IMPRIMIR BIEN */
+        @media print {
+            #input-section { display: none !important; }
+            #reporte-final { display: block !important; margin: 0; }
+            
+            /* Damos 25mm de margen abajo para que el texto fijo no pise la tabla */
+            @page { size: A4 landscape; margin: 15mm 20mm 25mm 20mm; } 
+            
+            th { -webkit-print-color-adjust: exact; }
+            table.tabla-poes > tbody > tr { page-break-inside: avoid; }
+            thead { display: table-header-group; } 
+            
+            /* El pie de página se clava al fondo del papel */
+            #footer-fijo {
+                display: block !important;
+                position: fixed;
+                bottom: 0px; 
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 8pt;
+                font-weight: 700;
+                color: var(--gris-texto);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="input-section">
+        <img src="http://donyeyo.com.ar/img/logo.png" alt="Don Yeyo" style="height: 40px;">
+        <h2 style="color: var(--azul-don-yeyo);">Generador de Reporte POES</h2>
+        <p>Filtrá por un Área en Excel, copiá las filas (con la cabecera) y pegalas acá:</p>
+        <textarea id="excel_data" placeholder="Pegá los datos aquí..."></textarea>
+        <br>
+        <button onclick="procesarDatos()">Generar Vista de Impresión</button>
+    </div>
+
+    <div id="reporte-final"></div>
+
+    <div id="footer-fijo">
+        ATENCIÓN: CADA TAREA REALIZADA DEBE REGISTRARSE EN LA APLICACIÓN "TAREAS DIARIAS"
+    </div>
+
+    <script>
+        function procesarDatos() {
+            const input = document.getElementById('excel_data').value;
+            if (!input) return alert("Pegá los datos del Excel, no me hagas adivinar.");
+
+            const filasProcesadas = [];
+            let filaActual = [];
+            let celdaActual = "";
+            let dentroDeComillas = false;
+
+            for (let i = 0; i < input.length; i++) {
+                let char = input[i];
+                let nextChar = input[i+1];
+
+                if (char === '"' && dentroDeComillas && nextChar === '"') {
+                    celdaActual += '"'; i++; 
+                } else if (char === '"') {
+                    dentroDeComillas = !dentroDeComillas;
+                } else if (char === '\t' && !dentroDeComillas) {
+                    filaActual.push(celdaActual);
+                    celdaActual = "";
+                } else if ((char === '\n' || char === '\r') && !dentroDeComillas) {
+                    if (char === '\r' && nextChar === '\n') i++;
+                    filaActual.push(celdaActual);
+                    filasProcesadas.push(filaActual);
+                    filaActual = [];
+                    celdaActual = "";
+                } else {
+                    celdaActual += char;
+                }
+            }
+            if (celdaActual || filaActual.length > 0) {
+                filaActual.push(celdaActual);
+                filasProcesadas.push(filaActual);
+            }
+
+            const headers = filasProcesadas[0].map(h => h ? h.trim().toUpperCase() : "");
+            
+            let idxArea = headers.indexOf("ÁREA");
+            if(idxArea === -1) idxArea = headers.indexOf("AREA");
+            
+            const idxItem = headers.indexOf("ITEM");
+            const idxFreq = headers.indexOf("FRECUENCIA");
+            const idxProc = headers.indexOf("PROCEDIMIENTO");
+
+            let areaCapturada = "NO ESPECIFICADO";
+            const datosAgrupados = {};
+            const ordenDeseado = ["DIARIA", "DIARIO", "SEMANAL", "QUINCENAL", "MENSUAL", "BIMESTRAL", "TRIMESTRAL", "SEMESTRAL", "ANUAL"];
+
+            for (let i = 1; i < filasProcesadas.length; i++) {
+                const f = filasProcesadas[i];
+                if (f.length < 2) continue;
+
+                if (areaCapturada === "NO ESPECIFICADO" && f[idxArea] && f[idxArea].trim() !== "") {
+                    areaCapturada = f[idxArea].trim();
+                }
+
+                const item = f[idxItem] || '';
+                const freq = f[idxFreq] ? f[idxFreq].trim().toUpperCase() : '';
+                const proc = f[idxProc] || '';
+
+                if (!freq || freq === 'SIN ESPECIFICAR') continue;
+
+                if (!datosAgrupados[freq]) datosAgrupados[freq] = [];
+                datosAgrupados[freq].push({ item, proc });
+            }
+
+            const frecuenciasOrdenadas = Object.keys(datosAgrupados).sort((a, b) => {
+                let indexA = ordenDeseado.indexOf(a);
+                let indexB = ordenDeseado.indexOf(b);
+                if (indexA === -1) indexA = 999;
+                if (indexB === -1) indexB = 999;
+                if (indexA !== indexB) return indexA - indexB;
+                return a.localeCompare(b);
+            });
+
+            const reporteFinal = document.getElementById('reporte-final');
+            reporteFinal.innerHTML = ""; 
+            
+            const hoy = new Date();
+            const fechaString = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
+
+            frecuenciasOrdenadas.forEach((freq) => {
+                const tabla = document.createElement('table');
+                tabla.className = "tabla-poes";
+                
+                // Sin el salto de página forzado, las tablas se apilan naturalmente
+                
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="header-cell-wrapper">
+                            <table class="layout-header">
+                                <tr>
+                                    <td style="width: 50%; text-align: left;">
+                                        <img src="http://donyeyo.com.ar/img/logo.png" alt="Don Yeyo" style="height: 45px;">
+                                    </td>
+                                    <td style="width: 50%; text-align: right;" class="header-titles">
+                                        <h1>PROCEDIMIENTO DE SANIDAD (POES)</h1>
+                                        <p>PLANTA PELLEGRINI | Generado: ${fechaString}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <h2 class="sector-titulo">SECTOR: ${areaCapturada} &nbsp;|&nbsp; FRECUENCIA: ${freq}</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width: 30%;">ITEM</th>
+                        <th style="width: 70%;">PROCEDIMIENTO</th>
+                    </tr>
+                `;
+                tabla.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                datosAgrupados[freq].forEach(fila => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${fila.item}</strong></td>
+                        <td>${fila.proc}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                tabla.appendChild(tbody);
+                
+                reporteFinal.appendChild(tabla);
+            });
+            
+            document.getElementById('input-section').style.display = "none";
+            reporteFinal.style.display = "block";
+            
+            setTimeout(() => { window.print(); }, 300);
+        }
+    </script>
+</body>
+</html>
