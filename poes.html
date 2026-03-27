@@ -20,7 +20,6 @@
             color: var(--gris-texto); 
         }
         
-        /* Interfaz de entrada */
         #input-section { 
             background: #eee; 
             padding: 30px; 
@@ -50,15 +49,13 @@
         }
         button:hover { background: #00264d; }
 
-        /* Reporte Final */
         #reporte-final { display: none; margin: 1.5cm; }
 
-        /* TABLAS INDIVIDUALES POR FRECUENCIA */
         table.tabla-poes { 
             width: 100%; 
             border-collapse: collapse; 
             table-layout: fixed; 
-            margin-bottom: 40px; /* Espacio elegante entre frecuencias */
+            margin-bottom: 40px; 
         }
         
         .header-cell-wrapper {
@@ -114,6 +111,7 @@
             text-align: left;
             letter-spacing: 0.5px;
         }
+        
         table.tabla-poes > tbody > tr > td { 
             padding: 10px 12px; 
             border-left: 1px solid var(--borde-suave); 
@@ -130,22 +128,18 @@
             background-color: var(--gris-fondo); 
         }
 
-        /* PIE DE PÁGINA (Oculto en pantalla normal) */
         #footer-fijo { display: none; }
 
-        /* MAGIA PARA IMPRIMIR BIEN */
         @media print {
             #input-section { display: none !important; }
             #reporte-final { display: block !important; margin: 0; }
             
-            /* Damos 25mm de margen abajo para que el texto fijo no pise la tabla */
             @page { size: A4 landscape; margin: 15mm 20mm 25mm 20mm; } 
             
             th { -webkit-print-color-adjust: exact; }
             table.tabla-poes > tbody > tr { page-break-inside: avoid; }
             thead { display: table-header-group; } 
             
-            /* El pie de página se clava al fondo del papel */
             #footer-fijo {
                 display: block !important;
                 position: fixed;
@@ -265,7 +259,13 @@
                 const tabla = document.createElement('table');
                 tabla.className = "tabla-poes";
                 
-                // Sin el salto de página forzado, las tablas se apilan naturalmente
+                // MAGIA INGENIERIL: Clavamos las columnas en 30% y 70% a la fuerza
+                const colgroup = document.createElement('colgroup');
+                colgroup.innerHTML = `
+                    <col style="width: 30%;">
+                    <col style="width: 70%;">
+                `;
+                tabla.appendChild(colgroup);
                 
                 const thead = document.createElement('thead');
                 thead.innerHTML = `
@@ -286,8 +286,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <th style="width: 30%;">ITEM</th>
-                        <th style="width: 70%;">PROCEDIMIENTO</th>
+                        <th>ITEM</th>
+                        <th>PROCEDIMIENTO</th>
                     </tr>
                 `;
                 tabla.appendChild(thead);
