@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta Dosificación - Planta Pellegrini</title>
+    <style>
+        /* Configuración de página para impresión A4 Horizontal */
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
 
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4; /* Solo para visualización en pantalla */
+        }
+
+        /* Contenedor de la etiqueta */
+        .etiqueta {
+            width: 260mm;
+            height: 170mm;
+            background-color: white;
+            border: 4px solid #000;
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Solo pantalla */
+        }
+
+        @media print {
+            body { background-color: white; }
+            .etiqueta { box-shadow: none; border: 5px solid #000; }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 48pt;
+            margin: 0;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #000;
+            text-transform: uppercase;
+        }
+
+        .info-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .campo {
+            font-size: 32pt;
+            font-weight: bold;
+        }
+
+        .dato {
+            font-weight: normal;
+            border-bottom: 2px solid #000;
+            display: inline-block;
+            min-width: 400px;
+            padding-left: 15px;
+        }
+
+        .cuadro-manual {
+            border: 2px solid #000;
+            height: 80px;
+            width: 450px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+
+        .footer {
+            text-align: right;
+            font-size: 12pt;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="etiqueta">
+        <h1>Dosificación Planta Pellegrini</h1>
+
+        <div class="info-container">
+            <div class="campo">
+                PRODUCTO: <span id="producto" class="dato"></span>
+            </div>
+
+            <div class="campo">
+                CANTIDAD: <div class="cuadro-manual"></div>
+            </div>
+
+            <div class="campo">
+                FECHA DE ELABORACIÓN: <span id="fecha" class="dato"></span>
+            </div>
+        </div>
+
+        <div class="footer">
+            Sistema de Gestión de Planta - Don Yeyo
+        </div>
+    </div>
+
+    <script>
+        // Función para obtener parámetros de la URL
+        function getParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name) || "________________";
+        }
+
+        // Asignar valores a los campos al cargar la página
+        window.onload = function() {
+            document.getElementById('producto').innerText = getParam('producto');
+            document.getElementById('fecha').innerText = getParam('fecha');
+        };
+    </script>
+
+</body>
+</html>
