@@ -1,1 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de QR - Don Yeyo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* --- ESTILOS PARA LA PANTALLA --- */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+        }
+        .logo-container {
+            margin-bottom: 15px;
+        }
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .btn {
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 96%;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .btn-generate {
+            background-color: #007bff;
+        }
+        .btn-generate:hover {
+            background-color: #0056b3;
+        }
+        .btn-print {
+            background-color: #28a745;
+            display: none; /* Se muestra solo cuando hay un QR generado */
+        }
+        .btn-print:hover {
+            background-color: #218838;
+        }
+        
+        /* Contenedor relativo para posicionar el logo en el centro del QR */
+        #qrcode-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        #qrcode img {
+            display: block;
+        }
 
+        /* Logo superpuesto en el centro del QR */
+        .qr-center-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; /* Tamaño del logo dentro del QR */
+            height: 50px;
+            background-color: white;
+            padding: 2px;
+            border-radius: 4px;
+            object-fit: contain; /* Evita que el logo se deforme */
+        }
+
+        /* --- ESTILOS DE IMPRESIÓN (MEDIDAS REALES 7x7 CM) --- */
+        @media print {
+            /* Ocultamos todo el diseño de la interfaz */
+            body, .container, h2, .form-group, .btn, .logo-container {
+                background: none !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: auto !important;
+            }
+            
+            h2, .form-group, .btn, .logo-container {
+                display: none !important;
+            }
+
+            /* Forzamos que el QR ocupe exactamente 7x7 cm en el papel */
+            #qrcode-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 7cm !important;
+                height: 7cm !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #qrcode, #qrcode canvas, #qrcode img {
+                width: 7cm !important;
+                height: 7cm !important;
+            }
+
+            /* Ajustamos el logo central proporcionalmente para la impresión */
+            .qr-center-logo {
+                width: 1.4cm !important;
+                height: 1.4cm !important;
+                padding: 2px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-container">
+        <img src="https://exportargentina.org.ar/companyimages/16232487854941.png" alt="Logo Don Yeyo">
+    </div>
+
+    <h2>Generador de QR</h2>
+    
+    <div class="form-group">
+        <label for="balanzaInput">Número de Balanza:</label>
+        <input type="text" id="balanzaInput" placeholder="Ej: B12" autocomplete="off">
+    </div>
+    
+    <button class="btn btn-generate" onclick="generarCodigoQR()">Generar QR</button>
+    <button class="btn btn-print" id="btnPrint" onclick="imprimirQR()">Imprimir QR</button>
+
+    <div id="qrcode-wrapper" style="display: none;">
+        <div id="qrcode"></div>
+        <img class="qr-center-logo" src="https://exportargentina.org.ar/companyimages/16232487854941.png" alt="Mini Logo">
+    </div>
+</div>
+
+<script>
+    let qrInstancia = null;
+
+    function generarCodigoQR() {
+        const balanzaValor = document.getElementById('balanzaInput').value.trim();
+        const qrWrapper = document.getElementById('qrcode-wrapper');
+        const qrContainer = document.getElementById('qrcode');
+        const btnPrint = document.getElementById('btnPrint');
+
+        if (balanzaValor === '') {
+            alert('Por favor, ingresá un número de balanza primero.');
+            return;
+        }
+
+        // Armamos el link sin mostrarlo en pantalla
+        const urlFinal = `https://gestionhy.github.io/htmlapp/balanza.html?balanza=${encodeURIComponent(balanzaValor)}`;
+
+        // Limpiamos el QR anterior si existiera
+        qrContainer.innerHTML = '';
+
+        // Generamos el QR con alta tolerancia a fallos
+        qrInstancia = new QRCode(qrContainer, {
+            text: urlFinal,
+            width: 250,
+            height: 250,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        // Mostramos el QR y habilitamos el botón de impresión
+        qrWrapper.style.display = 'inline-block';
+        btnPrint.style.display = 'block';
+    }
+
+    function imprimirQR() {
+        // Dispara la ventana de impresión nativa
+        window.print();
+    }
+
+    // Permitir usar la tecla Enter para agilizar la carga
+    document.getElementById('balanzaInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            generarCodigoQR();
+        }
+    });
+</script>
+
+</body>
+</html>
