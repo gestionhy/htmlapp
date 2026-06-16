@@ -130,14 +130,31 @@
 
         #footer-fijo { display: none; }
 
+        /* --- MAGIA NEGRA PARA LA IMPRESIÓN --- */
         @media print {
             #input-section { display: none !important; }
-            #reporte-final { display: block !important; margin: 0; }
+            #reporte-final { display: block !important; margin: 0; width: 100%; }
             
-            @page { size: A4 landscape; margin: 15mm 20mm 25mm 20mm; } 
+            /* Ajustamos los márgenes para que las 4 columnas entren joya en horizontal */
+            @page { size: A4 landscape; margin: 10mm 15mm 20mm 15mm; } 
             
-            th { -webkit-print-color-adjust: exact; }
-            table.tabla-poes > tbody > tr { page-break-inside: avoid; }
+            th { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            
+            table.tabla-poes { 
+                page-break-inside: auto; 
+                width: 100%;
+            }
+            
+            /* Obligamos a que las filas no se partan a la mitad entre dos hojas */
+            table.tabla-poes > tbody > tr { 
+                page-break-inside: avoid !important; 
+                break-inside: avoid !important; 
+            }
+            
+            /* Esto le dice al navegador que el Thead TIENE que repetirse */
             thead { display: table-header-group; } 
             
             #footer-fijo {
@@ -263,7 +280,6 @@
                 const tabla = document.createElement('table');
                 tabla.className = "tabla-poes";
                 
-                // MAGIA INGENIERIL ACTUALIZADA: Repartimos en 4 columnas
                 const colgroup = document.createElement('colgroup');
                 colgroup.innerHTML = `
                     <col style="width: 15%;">
