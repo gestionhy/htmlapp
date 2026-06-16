@@ -217,6 +217,8 @@
             const idxItem = headers.indexOf("ITEM");
             const idxFreq = headers.indexOf("FRECUENCIA");
             const idxProc = headers.indexOf("PROCEDIMIENTO");
+            const idxResp = headers.indexOf("RESPONSABLE");
+            const idxReq = headers.indexOf("REQUISITOS DE SEGURIDAD");
 
             let areaCapturada = "NO ESPECIFICADO";
             const datosAgrupados = {};
@@ -233,11 +235,13 @@
                 const item = f[idxItem] || '';
                 const freq = f[idxFreq] ? f[idxFreq].trim().toUpperCase() : '';
                 const proc = f[idxProc] || '';
+                const resp = f[idxResp] || '';
+                const req = f[idxReq] || '';
 
                 if (!freq || freq === 'SIN ESPECIFICAR') continue;
 
                 if (!datosAgrupados[freq]) datosAgrupados[freq] = [];
-                datosAgrupados[freq].push({ item, proc });
+                datosAgrupados[freq].push({ item, proc, resp, req });
             }
 
             const frecuenciasOrdenadas = Object.keys(datosAgrupados).sort((a, b) => {
@@ -259,18 +263,20 @@
                 const tabla = document.createElement('table');
                 tabla.className = "tabla-poes";
                 
-                // MAGIA INGENIERIL: Clavamos las columnas en 30% y 70% a la fuerza
+                // MAGIA INGENIERIL ACTUALIZADA: Repartimos en 4 columnas
                 const colgroup = document.createElement('colgroup');
                 colgroup.innerHTML = `
-                    <col style="width: 30%;">
-                    <col style="width: 70%;">
+                    <col style="width: 15%;">
+                    <col style="width: 45%;">
+                    <col style="width: 20%;">
+                    <col style="width: 20%;">
                 `;
                 tabla.appendChild(colgroup);
                 
                 const thead = document.createElement('thead');
                 thead.innerHTML = `
                     <tr>
-                        <td colspan="2" class="header-cell-wrapper">
+                        <td colspan="4" class="header-cell-wrapper">
                             <table class="layout-header">
                                 <tr>
                                     <td style="width: 50%; text-align: left;">
@@ -288,6 +294,8 @@
                     <tr>
                         <th>ITEM</th>
                         <th>PROCEDIMIENTO</th>
+                        <th>RESPONSABLE</th>
+                        <th>REQUISITOS DE SEGURIDAD</th>
                     </tr>
                 `;
                 tabla.appendChild(thead);
@@ -298,6 +306,8 @@
                     tr.innerHTML = `
                         <td><strong>${fila.item}</strong></td>
                         <td>${fila.proc}</td>
+                        <td>${fila.resp}</td>
+                        <td>${fila.req}</td>
                     `;
                     tbody.appendChild(tr);
                 });
