@@ -154,6 +154,14 @@
                 break-inside: avoid !important; 
             }
             
+            /* Cada tabla (área+frecuencia) arranca en una hoja nueva, salvo la primera */
+            table.tabla-poes {
+                page-break-before: always;
+            }
+            table.tabla-poes:first-of-type {
+                page-break-before: avoid;
+            }
+            
             /* Esto le dice al navegador que el Thead TIENE que repetirse */
             thead { display: table-header-group; } 
             
@@ -178,7 +186,7 @@
     <div id="input-section">
         <img src="https://donyeyo.com.ar/images/donyeyo-logo.svg" alt="Don Yeyo" style="height: 40px;">
         <h2 style="color: var(--azul-don-yeyo);">Generador de Reporte POES</h2>
-        <p>Filtrá por un Área en Excel, copiá las filas (con la cabecera) y pegalas acá:</p>
+        <p>Pegá los datos del Excel acá (con la cabecera). Podés incluir varios Sectores/Áreas a la vez, cada uno se va a agrupar y mostrar por separado:</p>
         <textarea id="excel_data" placeholder="Pegá los datos aquí..."></textarea>
         <br>
         <button onclick="procesarDatos()">Generar Vista de Impresión</button>
@@ -237,16 +245,27 @@
             const idxResp = headers.indexOf("RESPONSABLE");
             const idxReq = headers.indexOf("REQUISITOS DE SEGURIDAD");
 
-            let areaCapturada = "NO ESPECIFICADO";
-            const datosAgrupados = {};
+            // --- CORRECCIÓN PRINCIPAL ---
+            // Antes: una sola variable "areaCapturada" global, fijada una sola vez con
+            // la primera área no vacía que aparecía, y usada para TODAS las filas.
+            // Ahora: cada fila lleva su propia área (con "memoria" de la última área
+            // no vacía vista, para el caso de filas en blanco o de continuación que
+            // no repiten el valor de Área en esa columna), y se agrupa por la
+            // combinación ÁREA + FRECUENCIA, no solo por frecuencia.
+            let ultimaAreaVista = "NO ESPECIFICADO";
+            const datosAgrupados = {}; // clave: "AREA|||FRECUENCIA"
             const ordenDeseado = ["DIARIA", "DIARIO", "SEMANAL", "QUINCENAL", "MENSUAL", "BIMESTRAL", "TRIMESTRAL", "SEMESTRAL", "ANUAL"];
 
             for (let i = 1; i < filasProcesadas.length; i++) {
                 const f = filasProcesadas[i];
                 if (f.length < 2) continue;
 
-                if (areaCapturada === "NO ESPECIFICADO" && f[idxArea] && f[idxArea].trim() !== "") {
-                    areaCapturada = f[idxArea].trim();
+                // Si esta fila trae un área no vacía, la adoptamos como "área actual".
+                // Si no trae (fila vacía en esa columna), seguimos usando la última
+                // área vista, en vez de quedarnos pegados a la primera del archivo.
+                let areaFila = (f[idxArea] && f[idxArea].trim() !== "") ? f[idxArea].trim() : ultimaAreaVista;
+                if (areaFila !== "NO ESPECIFICADO") {
+                    ultimaAreaVista = areaFila;
                 }
 
                 const item = f[idxItem] || '';
@@ -257,17 +276,28 @@
 
                 if (!freq || freq === 'SIN ESPECIFICAR') continue;
 
-                if (!datosAgrupados[freq]) datosAgrupados[freq] = [];
-                datosAgrupados[freq].push({ item, proc, resp, req });
+                const clave = areaFila + "|||" + freq;
+                if (!datosAgrupados[clave]) {
+                    datosAgrupados[clave] = { area: areaFila, freq: freq, items: [] };
+                }
+                datosAgrupados[clave].items.push({ item, proc, resp, req });
             }
 
-            const frecuenciasOrdenadas = Object.keys(datosAgrupados).sort((a, b) => {
-                let indexA = ordenDeseado.indexOf(a);
-                let indexB = ordenDeseado.indexOf(b);
+            // Orden: primero por Área (orden de aparición), y dentro de cada área, por frecuencia
+            const clavesOrdenadas = Object.keys(datosAgrupados).sort((claveA, claveB) => {
+                const a = datosAgrupados[claveA];
+                const b = datosAgrupados[claveB];
+
+                if (a.area !== b.area) {
+                    return a.area.localeCompare(b.area, 'es');
+                }
+
+                let indexA = ordenDeseado.indexOf(a.freq);
+                let indexB = ordenDeseado.indexOf(b.freq);
                 if (indexA === -1) indexA = 999;
                 if (indexB === -1) indexB = 999;
                 if (indexA !== indexB) return indexA - indexB;
-                return a.localeCompare(b);
+                return a.freq.localeCompare(b.freq);
             });
 
             const reporteFinal = document.getElementById('reporte-final');
@@ -276,7 +306,11 @@
             const hoy = new Date();
             const fechaString = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
 
-            frecuenciasOrdenadas.forEach((freq) => {
+            clavesOrdenadas.forEach((clave) => {
+                const grupo = datosAgrupados[clave];
+                const areaCapturada = grupo.area;
+                const freq = grupo.freq;
+
                 const tabla = document.createElement('table');
                 tabla.className = "tabla-poes";
                 
@@ -317,7 +351,7 @@
                 tabla.appendChild(thead);
 
                 const tbody = document.createElement('tbody');
-                datosAgrupados[freq].forEach(fila => {
+                grupo.items.forEach(fila => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td><strong>${fila.item}</strong></td>
